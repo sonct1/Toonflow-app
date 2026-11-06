@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     class="directorDialog"
-    title="3D 导演台"
+    title="Bàn đạo diễn 3D"
     :modelValue="visible"
     width="min(1440px, calc(100vw - 40px))"
     alignCenter
@@ -14,7 +14,7 @@
     <template #header>
       <div class="directorHeader">
         <icon-cube3d-sphere :size="20" />
-        <span>3D 导演台</span>
+        <span>Bàn đạo diễn 3D</span>
         <small v-if="result">{{ result.name }}</small>
       </div>
     </template>
@@ -48,7 +48,7 @@
         <div class="playbackBar">
           <el-popover trigger="click" placement="top-start" :width="180">
             <template #reference>
-              <el-button :icon="IconSettings" :disabled="!ready" aria-label="场景设置">设置</el-button>
+              <el-button :icon="IconSettings" :disabled="!ready" aria-label="场景设置">Cài đặt</el-button>
             </template>
             <div class="sceneSettingsPanel">
               <div class="settingRow">
@@ -121,7 +121,7 @@
         <div class="controlHint">WASD 移动 · 空格上升 · Shift 下降 · 滚轮调焦 · 右键记录 · 左键 / Esc 退出取景</div>
         <div class="referenceHeader">
           <span>
-            关键帧
+            Khung hình chính
             <small>{{ anchors.length }}</small>
           </span>
           <small>拖动调整顺序</small>

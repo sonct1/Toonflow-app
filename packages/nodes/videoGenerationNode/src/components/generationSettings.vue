@@ -1,34 +1,34 @@
 <template>
   <el-popover v-model:visible="settingsVisible" trigger="click" placement="top-start" width="min(340px, calc(100vw - 24px))" :disabled="disabled" :showArrow="false" :popperStyle="{ padding: '14px' }">
     <template #reference>
-      <el-button class="settingsButton" text size="small" :disabled="disabled" :aria-expanded="settingsVisible" aria-label="视频生成设置">
+      <el-button class="settingsButton" text size="small" :disabled="disabled" :aria-expanded="settingsVisible" aria-label="Cài đặt tạo video">
         <span class="ratioShape" :style="ratioStyle(ratio)" aria-hidden="true" />
-        <span>{{ [ratio, resolution, duration ? `${duration}秒` : ''].filter(Boolean).join(' · ') }}</span>
+        <span>{{ [ratio, resolution, duration ? `${duration} giây` : ''].filter(Boolean).join(' · ') }}</span>
         <component :is="settingsVisible ? IconChevronDown : IconChevronUp" :size="14" aria-hidden="true" />
       </el-button>
     </template>
     <div class="generationSettings nodrag nopan nowheel" @pointerdown.stop @mousedown.stop @dblclick.stop @keydown.stop @wheel.stop>
-      <div v-if="modes.length" class="sectionLabel">生成模式</div>
-      <el-select v-if="modes.length" v-model="mode" :disabled="disabled" :teleported="false" aria-label="视频生成模式">
+      <div v-if="modes.length" class="sectionLabel">Chế độ tạo</div>
+      <el-select v-if="modes.length" v-model="mode" :disabled="disabled" :teleported="false" aria-label="Chế độ tạo video">
         <el-option v-for="item in modes" :key="item.value" :value="item.value" :label="item.label" />
       </el-select>
       <div v-if="durations.length || resolutions.length" class="outputOptions">
         <div v-if="durations.length" class="outputField">
-          <div class="sectionLabel">时长</div>
-          <el-select v-model="duration" :disabled="disabled" :teleported="false" aria-label="视频时长">
-            <el-option v-for="item in durations" :key="item" :value="item" :label="`${item}秒`" />
+          <div class="sectionLabel">Thời lượng</div>
+          <el-select v-model="duration" :disabled="disabled" :teleported="false" aria-label="Thời lượng video">
+            <el-option v-for="item in durations" :key="item" :value="item" :label="`${item} giây`" />
           </el-select>
         </div>
         <div v-if="resolutions.length" class="outputField">
-          <div class="sectionLabel">分辨率</div>
-          <el-select v-model="resolution" :disabled="disabled" :teleported="false" aria-label="视频分辨率">
+          <div class="sectionLabel">Độ phân giải</div>
+          <el-select v-model="resolution" :disabled="disabled" :teleported="false" aria-label="Độ phân giải video">
             <el-option v-for="item in resolutions" :key="item" :value="item" :label="item" />
           </el-select>
         </div>
       </div>
-      <div class="sectionLabel">通用比例</div>
-      <div class="ratioOptions" role="group" aria-label="视频比例">
-        <el-button v-for="item in ratios" :key="item" class="ratioButton" :disabled="disabled" :aria-label="`比例 ${item}`" :aria-pressed="ratio === item" @click="ratio = item">
+      <div class="sectionLabel">Tỷ lệ khung hình</div>
+      <div class="ratioOptions" role="group" aria-label="Tỷ lệ video">
+        <el-button v-for="item in ratios" :key="item" class="ratioButton" :disabled="disabled" :aria-label="`Tỷ lệ ${item}`" :aria-pressed="ratio === item" @click="ratio = item">
           <span class="ratioContent">
             <span class="ratioShape" :style="ratioStyle(item)" aria-hidden="true" />
             <span>{{ item }}</span>
@@ -36,8 +36,8 @@
         </el-button>
       </div>
       <div v-if="model?.audio === 'optional'" class="audioOption">
-        <span class="sectionLabel">生成音频</span>
-        <el-switch v-model="generateAudio" :disabled="disabled" aria-label="生成音频" />
+        <span class="sectionLabel">Tạo âm thanh</span>
+        <el-switch v-model="generateAudio" :disabled="disabled" aria-label="Tạo âm thanh" />
       </div>
       <modelForm v-model="other" :rules="model?.rules" :disabled="disabled" />
     </div>
@@ -60,11 +60,11 @@ const mode = defineModel<string>("mode", { required: true });
 const generateAudio = defineModel<boolean>("generateAudio", { required: true });
 const other = defineModel<Record<string, unknown>>("other", { required: true });
 const modeLabels: Record<string, string> = {
-  text: "文生视频", singleImage: "单图参考", startEndRequired: "首尾帧必填", endFrameOptional: "尾帧可选", startFrameOptional: "首帧可选",
+  text: "Văn bản thành video", singleImage: "Tham chiếu một ảnh", startEndRequired: "Bắt buộc khung hình đầu và cuối", endFrameOptional: "Khung hình cuối tùy chọn", startFrameOptional: "Khung hình đầu tùy chọn",
 };
 const modes = computed(() => (props.model?.mode ?? []).map(item => ({
   value: JSON.stringify(item),
-  label: Array.isArray(item) ? "混合参考" : modeLabels[item] ?? item,
+  label: Array.isArray(item) ? "Tham chiếu kết hợp" : modeLabels[item] ?? item,
 })));
 const mappings = computed(() => props.model?.durationResolutionMap ?? []);
 const durations = computed(() => [...new Set(mappings.value.flatMap(item => item.duration))].sort((a, b) => a - b));

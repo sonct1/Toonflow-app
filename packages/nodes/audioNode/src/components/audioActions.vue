@@ -2,7 +2,7 @@
   <teleport v-if="mode === 'speed' && target" :to="target">
     <el-card class="speedPanel" shadow="never" :bodyStyle="{ padding: '8px' }">
       <div class="speedControls nodrag nopan nowheel" @pointerdown.stop @mousedown.stop @dblclick.stop @keydown.stop>
-        <el-button class="exitButton" :icon="IconX" text :disabled="cancelling" :title="processing ? '取消处理' : '关闭变速'" :aria-label="processing ? '取消变速处理' : '关闭变速'" @click="close">变速</el-button>
+        <el-button class="exitButton" :icon="IconX" text :disabled="cancelling" :title="processing ? 'Hủy xử lý' : '关闭变速'" :aria-label="processing ? '取消变速处理' : '关闭变速'" @click="close">Đổi tốc độ</el-button>
         <span class="speedLimit">0.1×</span>
         <el-slider v-model="speed" class="speedSlider" :min="0.1" :max="4" :step="0.1" :disabled="processing" :formatTooltip="value => `${value.toFixed(2)}×`" aria-label="音频变速滑块" />
         <span class="speedLimit">4×</span>
@@ -15,7 +15,7 @@
   <el-dialog class="clipDialog" :modelValue="mode === 'clip'" width="900px" alignCenter appendToBody destroyOnClose :showClose="false" :closeOnClickModal="!processing" :closeOnPressEscape="!processing" :style="{ maxWidth: 'calc(100vw - 24px)', maxHeight: '84vh', display: 'flex', flexDirection: 'column' }" @update:modelValue="value => !value && close()">
     <template #header>
       <div class="clipHeader">
-        <el-button :icon="IconX" text :disabled="cancelling" :aria-label="processing ? '取消截取处理' : '关闭音频截取'" :title="processing ? '取消处理' : '关闭'" @click="close" />
+        <el-button :icon="IconX" text :disabled="cancelling" :aria-label="processing ? '取消截取处理' : '关闭音频截取'" :title="processing ? 'Hủy xử lý' : 'Đóng'" @click="close" />
         <span>截取与拼接</span>
       </div>
     </template>
@@ -23,7 +23,7 @@
     <template #footer>
       <div class="clipFooter">
         <span v-if="processing" class="processingStatus" role="status">{{ cancelling ? '正在取消并清理…' : '正在导出音频…' }}</span>
-        <el-button :disabled="cancelling" @click="close">{{ processing ? '取消处理' : '取消' }}</el-button>
+        <el-button :disabled="cancelling" @click="close">{{ processing ? 'Hủy xử lý' : 'Hủy' }}</el-button>
         <el-button type="primary" :loading="processing" :disabled="disabled || !clipEditor?.valid" @click="run">导出音频</el-button>
       </div>
     </template>

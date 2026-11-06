@@ -20,8 +20,8 @@
       <template #time><span>{{ formatTime(playhead) }}</span><span>/</span><span>{{ formatTime(totalDuration) }}</span></template>
     </audioPlayer>
     <div class="editActions">
-      <el-button :icon="IconArrowBackUp" :disabled="disabled || !undoStack.length" title="撤销（Ctrl+Z）" @click="undo">撤销</el-button>
-      <el-button :icon="IconArrowForwardUp" :disabled="disabled || !redoStack.length" title="恢复（Ctrl+Y）" @click="redo">恢复</el-button>
+      <el-button :icon="IconArrowBackUp" :disabled="disabled || !undoStack.length" title="撤销（Ctrl+Z）" @click="undo">Hoàn tác</el-button>
+      <el-button :icon="IconArrowForwardUp" :disabled="disabled || !redoStack.length" title="恢复（Ctrl+Y）" @click="redo">Làm lại</el-button>
       <el-button :icon="IconScissors" :disabled="disabled || !canSplit" @click="splitSegment">分割</el-button>
       <el-button :icon="IconLink" :disabled="disabled || !canMerge" :title="selectedIndex > 0 ? '与前一片段粘合' : '与后一片段粘合'" @click="mergeSegment">粘合</el-button>
       <el-button :icon="IconTrash" :disabled="disabled || !activeSegment" @click="removeSegment">删除选中片段</el-button>

@@ -6,7 +6,7 @@
           <span class="shotCount"><icon-movie :size="16" />{{ result.scenes.length }} 个镜头</span>
           <span><icon-clock :size="15" />{{ formatSceneTime(result.duration) }}</span>
           <span>{{ result.width }} × {{ result.height }}</span>
-          <span v-if="result.audio"><icon-wave-sine :size="15" />原音轨</span>
+          <span v-if="result.audio"><icon-wave-sine :size="15" />Âm thanh gốc</span>
         </div>
         <el-button v-if="manifestUrl" class="downloadButton" tag="a" :href="manifestUrl" download="sceneManifest.json" :icon="IconDownload" text size="small">下载清单</el-button>
       </div>
@@ -40,7 +40,7 @@
                     <span>{{ formatSceneTime(selectedScene.start) }} – {{ formatSceneTime(selectedScene.end) }}</span>
                   </div>
                   <el-radio-group v-if="selectedScene.image && selectedScene.video" v-model="previewKind" size="small" aria-label="镜头预览类型">
-                    <el-radio-button value="image">关键帧</el-radio-button>
+                    <el-radio-button value="image">Khung hình chính</el-radio-button>
                     <el-radio-button value="video">视频片段</el-radio-button>
                   </el-radio-group>
                 </div>

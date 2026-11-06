@@ -8,7 +8,7 @@
       :previewSrcList="[mediaSrc]"
       previewTeleported
       fit="cover"
-      :alt="`预览引用 ${index}`"
+      :alt="`Xem trước tham chiếu ${index}`"
       draggable="false"
       @click.stop
       @load="handleLoaded"
@@ -29,8 +29,8 @@
       class="removeButton nodrag nopan"
       :icon="IconX"
       circle
-      :aria-label="`删除引用 ${index}`"
-      title="删除引用"
+      :aria-label="`Xóa tham chiếu ${index}`"
+      title="Xóa tham chiếu"
       @pointerdown.stop
       @mousedown.stop
       @dblclick.stop

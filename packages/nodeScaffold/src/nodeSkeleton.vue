@@ -15,12 +15,12 @@
       @command="handleCommand">
       <template #dropdown>
         <el-dropdown-menu>
-          <el-dropdown-item v-if="assetOutputs.length && saveNodeToAssets" command="saveAsset" :icon="IconFolderPlus">保存到素材库</el-dropdown-item>
-          <el-dropdown-item :divided="!!(assetOutputs.length && saveNodeToAssets)" command="copy" :icon="IconCopy">复制节点</el-dropdown-item>
-          <el-dropdown-item command="duplicate" :icon="IconCopyPlus">创建副本</el-dropdown-item>
-          <el-dropdown-item command="delete" :icon="IconTrash">删除节点</el-dropdown-item>
+          <el-dropdown-item v-if="assetOutputs.length && saveNodeToAssets" command="saveAsset" :icon="IconFolderPlus">Lưu vào thư viện</el-dropdown-item>
+          <el-dropdown-item :divided="!!(assetOutputs.length && saveNodeToAssets)" command="copy" :icon="IconCopy">Sao chép node</el-dropdown-item>
+          <el-dropdown-item command="duplicate" :icon="IconCopyPlus">Tạo bản sao</el-dropdown-item>
+          <el-dropdown-item command="delete" :icon="IconTrash">Xóa node</el-dropdown-item>
           <el-dropdown-item divided command="clipboard" :icon="IconCopy" :disabled="!copyNodeToClipboard || copyingToClipboard">
-            复制到剪贴板
+            Sao chép vào bộ nhớ tạm
           </el-dropdown-item>
         </el-dropdown-menu>
       </template>
@@ -40,9 +40,9 @@
             :icon="IconFolderPlus"
             :disabled="!assetOutputs.length || !saveNodeToAssets"
             text
-            title="添加到素材库"
-            aria-label="添加到素材库"
-            @click.stop="handleCommand('saveAsset')">添加到素材库</el-button>
+            title="Thêm vào thư viện"
+            aria-label="Thêm vào thư viện"
+            @click.stop="handleCommand('saveAsset')">Thêm vào thư viện</el-button>
           <slot name="topActions" />
           <el-divider direction="vertical" />
           <slot name="topRightActions" />
@@ -55,8 +55,8 @@
             :loading="downloading"
             :aria-busy="downloading"
             text
-            :title="downloading ? '正在保存…' : '下载'"
-            aria-label="下载"
+            :title="downloading ? 'Đang lưu…' : 'Tải xuống'"
+            aria-label="Tải xuống"
             @downloadstate="downloading = $event.detail"
             @click.stop />
           <el-button
@@ -64,8 +64,8 @@
             :icon="IconMaximize"
             :disabled="!downloadUrl"
             text
-            title="全屏"
-            aria-label="全屏"
+            title="Toàn màn hình"
+            aria-label="Toàn màn hình"
             @click.stop="emit('fullscreen')" />
         </el-card>
       </slot>
@@ -88,7 +88,7 @@
         ref="labelInput"
         v-model="labelDraft"
         class="labelInput nodrag nopan"
-        aria-label="节点名称"
+        aria-label="Tên node"
         @pointerdown.stop
         @mousedown.stop
         @dblclick.stop
@@ -100,7 +100,7 @@
         v-else
         class="labelText"
         :tabindex="readOnly ? undefined : 0"
-        :title="readOnly ? label : `${label}（双击编辑名称）`"
+        :title="readOnly ? label : `${label} (nhấp đúp để đổi tên)`"
         @dblclick="!readOnly && ($event.stopPropagation(), editLabel())"
         @keydown.enter.stop.prevent="editLabel">
         {{ label }}
@@ -111,10 +111,10 @@
           :loading="loading || reloading"
           :disabled="loading || !reloadRemoteNode"
           text
-          title="刷新节点"
-          aria-label="刷新节点"
+          title="Tải lại node"
+          aria-label="Tải lại node"
           @click.stop="reloadNode" />
-        <el-button :icon="IconTrash" text title="移除节点" aria-label="移除节点" @click.stop="deleteNode" :loading="deleting" />
+        <el-button :icon="IconTrash" text title="Xóa node" aria-label="Xóa node" @click.stop="deleteNode" :loading="deleting" />
       </div>
     </div>
     <div class="cardContainer">
@@ -124,9 +124,9 @@
         shadow="never"
         :bodyStyle="{ padding: '8px' }"
         :style="{ minHeight: `${cardHeight}px` }">
-        <div v-if="loading" class="loadingContent" role="status" aria-label="节点加载中">
+        <div v-if="loading" class="loadingContent" role="status" aria-label="Đang tải node">
           <icon-loader2 class="loadingIcon" :size="24" aria-hidden="true" />
-          <span>加载中...</span>
+          <span>Đang tải...</span>
         </div>
         <slot v-else-if="previewReady || documentTarget" />
       </el-card>
@@ -160,7 +160,7 @@
         v-if="!readOnly && !loading && !documentTarget"
         class="resizeCorner nodrag nopan"
         type="button"
-        aria-label="调整节点大小（方向键微调）"
+        aria-label="Đổi kích thước node (dùng phím mũi tên để tinh chỉnh)"
         @pointerdown.stop.prevent="startResize"
         @pointermove.stop="moveResize"
         @pointerup.stop="finishResize"

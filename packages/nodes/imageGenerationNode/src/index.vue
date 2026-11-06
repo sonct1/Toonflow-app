@@ -11,17 +11,17 @@
     :style="{ width: (previewUrl || inpaintGuideUrl) && imageWidth ? `${imageWidth + 18}px` : undefined }">
     <template v-if="editor?.mode" #top><div ref="paintToolbar" /></template>
     <template #topActions>
-      <el-button class="panoramaButton" :icon="IconPanoramaHorizontal" :disabled="generating || deleting || uploading || editor?.busy || lighting?.generating || multiAngle?.generating || gridSplit?.splitting || panorama?.busy || !previewUrl" text title="全景图" aria-label="全景图" @click.stop="panorama?.open($event)">全景图<icon-chevron-down class="menuChevron" :size="14" /></el-button>
-      <el-button :icon="IconBrush" :disabled="generating || deleting || uploading || lighting?.generating || multiAngle?.generating || panorama?.busy || !previewUrl || gridSplit?.splitting" text title="局部重绘" aria-label="局部重绘" @click.stop="startEditor('inpaint')">局部重绘</el-button>
-      <el-button :icon="IconSun" :disabled="generating || deleting || uploading || lighting?.generating || multiAngle?.generating || panorama?.busy || !previewUrl || gridSplit?.splitting" text title="打光" aria-label="打光" @click.stop="openLighting">打光</el-button>
-      <el-button :icon="IconCameraRotate" :disabled="generating || deleting || uploading || lighting?.generating || multiAngle?.generating || panorama?.busy || !previewUrl || gridSplit?.splitting" text title="多角度" aria-label="多角度" @click.stop="openMultiAngle">多角度</el-button>
-      <el-button :icon="IconLayoutGrid" :disabled="generating || deleting || uploading || lighting?.generating || multiAngle?.generating || panorama?.busy || !previewUrl" :loading="gridSplit?.splitting" text title="宫格切分" aria-label="宫格切分" @click.stop="gridSplit?.open($event)">宫格切分</el-button>
+      <el-button class="panoramaButton" :icon="IconPanoramaHorizontal" :disabled="generating || deleting || uploading || editor?.busy || lighting?.generating || multiAngle?.generating || gridSplit?.splitting || panorama?.busy || !previewUrl" text title="Ảnh toàn cảnh" aria-label="Ảnh toàn cảnh" @click.stop="panorama?.open($event)">Ảnh toàn cảnh<icon-chevron-down class="menuChevron" :size="14" /></el-button>
+      <el-button :icon="IconBrush" :disabled="generating || deleting || uploading || lighting?.generating || multiAngle?.generating || panorama?.busy || !previewUrl || gridSplit?.splitting" text title="Vẽ lại vùng chọn" aria-label="Vẽ lại vùng chọn" @click.stop="startEditor('inpaint')">Vẽ lại vùng chọn</el-button>
+      <el-button :icon="IconSun" :disabled="generating || deleting || uploading || lighting?.generating || multiAngle?.generating || panorama?.busy || !previewUrl || gridSplit?.splitting" text title="Chiếu sáng" aria-label="Chiếu sáng" @click.stop="openLighting">Chiếu sáng</el-button>
+      <el-button :icon="IconCameraRotate" :disabled="generating || deleting || uploading || lighting?.generating || multiAngle?.generating || panorama?.busy || !previewUrl || gridSplit?.splitting" text title="Nhiều góc nhìn" aria-label="Nhiều góc nhìn" @click.stop="openMultiAngle">Nhiều góc nhìn</el-button>
+      <el-button :icon="IconLayoutGrid" :disabled="generating || deleting || uploading || lighting?.generating || multiAngle?.generating || panorama?.busy || !previewUrl" :loading="gridSplit?.splitting" text title="Chia ảnh theo lưới" aria-label="Chia ảnh theo lưới" @click.stop="gridSplit?.open($event)">Chia ảnh theo lưới</el-button>
       <mediaHistory mediaType="image" :current="outputFile" :disabled="generating || deleting || uploading || lighting?.generating || multiAngle?.generating || panorama?.busy" @select="outputs.image = { dataType: 'IMAGE', value: $event }" />
-      <el-button :icon="IconTransfer" :loading="uploading" :disabled="generating || deleting || lighting?.generating || multiAngle?.generating || panorama?.busy" text title="替换图片" aria-label="替换图片" @click.stop="fileInput?.click()">替换图片</el-button>
-      <input ref="fileInput" type="file" accept="image/*" hidden aria-label="选择替换图片" :disabled="generating || deleting || uploading || lighting?.generating || multiAngle?.generating || panorama?.busy" @change="replaceOutput" />
+      <el-button :icon="IconTransfer" :loading="uploading" :disabled="generating || deleting || lighting?.generating || multiAngle?.generating || panorama?.busy" text title="Thay ảnh" aria-label="Thay ảnh" @click.stop="fileInput?.click()">Thay ảnh</el-button>
+      <input ref="fileInput" type="file" accept="image/*" hidden aria-label="Chọn ảnh thay thế" :disabled="generating || deleting || uploading || lighting?.generating || multiAngle?.generating || panorama?.busy" @change="replaceOutput" />
     </template>
     <template #topRightActions>
-      <el-button :icon="IconPencil" :disabled="generating || deleting || uploading || lighting?.generating || multiAngle?.generating || panorama?.busy || !previewUrl || gridSplit?.splitting" text title="标记" aria-label="标记" @click.stop="startEditor('mark')" />
+      <el-button :icon="IconPencil" :disabled="generating || deleting || uploading || lighting?.generating || multiAngle?.generating || panorama?.busy || !previewUrl || gridSplit?.splitting" text title="Đánh dấu" aria-label="Đánh dấu" @click.stop="startEditor('mark')" />
     </template>
     <div v-loading="generating || uploading" class="imageContent nopan" :aria-busy="generating || uploading">
       <imageEditor
@@ -30,14 +30,14 @@
         :src="previewUrl"
         :toolbarTarget="paintToolbar"
         :disabled="generating || deleting || uploading || lighting?.generating || multiAngle?.generating || panorama?.busy"
-        alt="生成图片"
+        alt="Tạo ảnh"
         @load="resizeImage"
-        @error="showNodeError('无法预览该图片', '图片预览失败')" />
+        @error="showNodeError('Không thể xem trước ảnh này', 'Xem trước ảnh thất bại')" />
       <div v-else-if="inpaintGuideUrl" class="inpaintGuide">
-        <img :src="inpaintGuideUrl" alt="局部重绘标注图" draggable="false" @load="resizeImage" @error="showNodeError('无法读取重绘标注图', '重绘标注读取失败')" />
-        <span>红色标注为重绘区域</span>
+        <img :src="inpaintGuideUrl" alt="Ảnh đánh dấu vùng vẽ lại" draggable="false" @load="resizeImage" @error="showNodeError('Không thể đọc ảnh đánh dấu vùng vẽ lại', 'Không thể tải vùng vẽ lại')" />
+        <span>Vùng đánh dấu màu đỏ sẽ được vẽ lại</span>
       </div>
-      <div v-else class="imageEmpty" role="img" aria-label="暂无生成图片">
+      <div v-else class="imageEmpty" role="img" aria-label="Chưa có ảnh được tạo">
         <icon-photo-ai :size="48" stroke="1.25" aria-hidden="true" />
       </div>
     </div>
@@ -45,7 +45,7 @@
       <div v-if="lightingVisible" ref="lightingTarget" />
       <div v-else-if="multiAngleVisible" ref="multiAngleTarget" />
       <el-card v-else class="promptCard" shadow="never" :bodyStyle="{ padding: '14px 16px 12px' }">
-        <el-button v-if="inpaintGuideUrl && editor?.mode !== 'inpaint'" class="inpaintInfo" text :icon="IconBrush" @click="inpaintPreviewVisible = true">查看重绘标注</el-button>
+        <el-button v-if="inpaintGuideUrl && editor?.mode !== 'inpaint'" class="inpaintInfo" text :icon="IconBrush" @click="inpaintPreviewVisible = true">Xem vùng vẽ lại</el-button>
         <referenceItem
           v-if="refList.length"
           v-model="refList"
@@ -61,12 +61,12 @@
             filterable
             :loading="modelsLoading"
             :disabled="generating || deleting"
-            placeholder="选择模型"
-            aria-label="生成模型"
-            noDataText="请先在设置中添加图片模型"
+            placeholder="Chọn mô hình"
+            aria-label="Mô hình tạo nội dung"
+            noDataText="Hãy thêm mô hình tạo ảnh trong Cài đặt"
             placement="top-start"
             @update:modelValue="data.model = $event"
-            @visible-change="(visible) => visible && loadModels().catch((error) => showNodeError(error, '模型读取失败'))">
+            @visible-change="(visible) => visible && loadModels().catch((error) => showNodeError(error, 'Không thể tải mô hình'))">
             <template v-if="!selectedModel" #prefix><icon-sparkles :size="17" /></template>
             <template #label="{ label }"><modelLabel :label="label" :providerId="selectedModel?.providerId" :modelId="selectedModel?.modelId" /></template>
             <el-option-group v-for="provider in modelGroups" :key="provider.id" :label="provider.label">
@@ -88,17 +88,17 @@
             :sizes="sizeOptions"
             :ratios="ratioOptions"
             :disabled="generating || deleting || !selectedModel" />
-          <el-button v-if="editor?.mode === 'inpaint'" class="confirmButton" type="primary" :icon="IconCheck" :loading="editor.busy" :disabled="deleting || uploading || !generationPrompt" @click="confirmInpaint().catch(error => showNodeError(error, '重绘节点创建失败'))">确认</el-button>
+          <el-button v-if="editor?.mode === 'inpaint'" class="confirmButton" type="primary" :icon="IconCheck" :loading="editor.busy" :disabled="deleting || uploading || !generationPrompt" @click="confirmInpaint().catch(error => showNodeError(error, 'Không thể tạo node vẽ lại'))">Xác nhận</el-button>
           <div v-else class="generationActions">
             <mediaPrice v-if="priceInput" :input="{ ...priceInput, mediaType: 'image' }" :supported="selectedModel?.supportsPrice === true" />
-            <el-button v-if="pendingRecovery" class="sendButton" :icon="IconPlayerStop" :loading="cancelling" :disabled="deleting || uploading" title="放弃任务" aria-label="放弃任务" @click="generationState.cancel().catch(error => showNodeError(error, '停止生成失败'))" />
+            <el-button v-if="pendingRecovery" class="sendButton" :icon="IconPlayerStop" :loading="cancelling" :disabled="deleting || uploading" title="Hủy tác vụ" aria-label="Hủy tác vụ" @click="generationState.cancel().catch(error => showNodeError(error, 'Không thể dừng tạo'))" />
             <el-button
               class="sendButton"
               :icon="generating ? IconPlayerStop : IconArrowUp"
               :disabled="cancelling || deleting || uploading || (!generating && (editor?.busy || (!pendingRecovery && (!generationPrompt || !selectedModel))))"
-              :title="generating ? '停止生成' : pendingRecovery ? '复查任务' : '生成图片'"
-              :aria-label="generating ? '停止生成' : pendingRecovery ? '复查任务' : '生成图片'"
-              @click="generating ? generationState.cancel().catch(error => showNodeError(error, '停止生成失败')) : startGeneration().catch((error) => showNodeError(error, '图片生成失败'))" />
+              :title="generating ? 'Dừng tạo' : pendingRecovery ? 'Kiểm tra lại tác vụ' : 'Tạo ảnh'"
+              :aria-label="generating ? 'Dừng tạo' : pendingRecovery ? 'Kiểm tra lại tác vụ' : 'Tạo ảnh'"
+              @click="generating ? generationState.cancel().catch(error => showNodeError(error, 'Không thể dừng tạo')) : startGeneration().catch((error) => showNodeError(error, 'Tạo ảnh thất bại'))" />
           </div>
         </div>
       </el-card>
@@ -144,13 +144,13 @@ defineOptions({
   inheritAttrs: false,
   icon: IconPhotoAi,
   handles: [
-    { id: "in", type: "target", dataType: ["IMAGE", "STRING"], label: "图片、文本输入" },
-    { id: "image", type: "source", dataType: "IMAGE", label: "图片输出" },
+    { id: "in", type: "target", dataType: ["IMAGE", "STRING"], label: "Ảnh và văn bản đầu vào" },
+    { id: "image", type: "source", dataType: "IMAGE", label: "Ảnh đầu ra" },
   ] satisfies NodeHandle[],
 });
 const vLoading = ElLoading.directive;
 const { id, node, nodeProps, nodeEvent, outputs, files, ai, updateNodeInternals } = useNode({
-  label: "图片生成",
+  label: "Tạo ảnh",
   onModelsChanged: () => void refreshProviderModels(),
 });
 type PromptModel = NonNullable<InstanceType<typeof promptInput>["$props"]["modelValue"]>;

@@ -1,24 +1,24 @@
 <template>
   <teleport :to="target ?? 'body'" :disabled="!target">
-    <section v-show="!!target" class="multiAnglePanel nodrag nopan nowheel" aria-label="图片多角度" @pointerdown.stop @mousedown.stop @dblclick.stop @wheel.stop @keydown.stop>
+    <section v-show="!!target" class="multiAnglePanel nodrag nopan nowheel" aria-label="Ảnh nhiều góc nhìn" @pointerdown.stop @mousedown.stop @dblclick.stop @wheel.stop @keydown.stop>
       <header class="panelHeader">
-        <div class="panelTitle"><icon-camera-rotate :size="18" /><strong>多角度</strong></div>
+        <div class="panelTitle"><icon-camera-rotate :size="18" /><strong>Nhiều góc nhìn</strong></div>
         <div class="headerActions">
-          <el-button :icon="IconRestore" text size="small" :disabled="busy" @click="reset">重置</el-button>
-          <el-button :icon="IconX" text :disabled="generating" aria-label="关闭多角度" @click="emit('close')" />
+          <el-button :icon="IconRestore" text size="small" :disabled="busy" @click="reset">Đặt lại</el-button>
+          <el-button :icon="IconX" text :disabled="generating" aria-label="Đóng nhiều góc nhìn" @click="emit('close')" />
         </div>
       </header>
       <div class="angleWorkspace">
-        <div class="presetColumn" role="group" aria-label="常用视角">
-          <span>常用视角</span>
+        <div class="presetColumn" role="group" aria-label="Góc nhìn thường dùng">
+          <span>Góc nhìn thường dùng</span>
           <button v-for="preset in multiAnglePresets" :key="preset.id" type="button" :aria-pressed="activePreset?.id === preset.id" :disabled="busy" @click="selectPreset(preset)">{{ preset.label }}</button>
         </div>
         <div class="stageColumn">
           <div class="stageHeader">
-            <span>{{ activePreset?.label ?? '自定义' }}</span>
-            <div class="viewSwitch" role="group" aria-label="预览模式">
-              <button type="button" :aria-pressed="settings.viewMode === 'orbit'" :disabled="busy" @click="settings.viewMode = 'orbit'">空间总览</button>
-              <button type="button" :aria-pressed="settings.viewMode === 'camera'" :disabled="busy" @click="settings.viewMode = 'camera'">参考平面</button>
+            <span>{{ activePreset?.label ?? 'Tùy chỉnh' }}</span>
+            <div class="viewSwitch" role="group" aria-label="Chế độ xem trước">
+              <button type="button" :aria-pressed="settings.viewMode === 'orbit'" :disabled="busy" @click="settings.viewMode = 'orbit'">Toàn cảnh không gian</button>
+              <button type="button" :aria-pressed="settings.viewMode === 'camera'" :disabled="busy" @click="settings.viewMode = 'camera'">Mặt phẳng tham chiếu</button>
             </div>
           </div>
           <imageMultiAngleStage
@@ -35,20 +35,20 @@
       </div>
       <div class="parameterRow">
         <div class="rangeControl">
-          <div class="rangeHeader"><span>水平环绕</span><label class="numberControl"><input :value="Math.round(settings.azimuth)" type="number" min="-180" max="180" step="1" :disabled="busy" aria-label="水平环绕数值" @change="setParameter($event, 'azimuth')" /><span>°</span></label></div>
+          <div class="rangeHeader"><span>Xoay ngang</span><label class="numberControl"><input :value="Math.round(settings.azimuth)" type="number" min="-180" max="180" step="1" :disabled="busy" aria-label="水平环绕数值" @change="setParameter($event, 'azimuth')" /><span>°</span></label></div>
           <input v-model.number="settings.azimuth" type="range" min="-180" max="180" step="1" :disabled="busy" aria-label="相机水平环绕" />
         </div>
         <div class="rangeControl">
-          <div class="rangeHeader"><span>垂直俯仰</span><label class="numberControl"><input :value="Math.round(settings.elevation)" type="number" min="-80" max="80" step="1" :disabled="busy" aria-label="垂直俯仰数值" @change="setParameter($event, 'elevation')" /><span>°</span></label></div>
+          <div class="rangeHeader"><span>Nghiêng dọc</span><label class="numberControl"><input :value="Math.round(settings.elevation)" type="number" min="-80" max="80" step="1" :disabled="busy" aria-label="垂直俯仰数值" @change="setParameter($event, 'elevation')" /><span>°</span></label></div>
           <input v-model.number="settings.elevation" type="range" min="-80" max="80" step="1" :disabled="busy" aria-label="相机垂直俯仰" />
         </div>
         <div class="rangeControl">
-          <div class="rangeHeader"><span>拍摄距离</span><label class="numberControl"><input :value="settings.distance.toFixed(1)" type="number" min="2" max="10" step="0.1" :disabled="busy" aria-label="拍摄距离数值" @change="setParameter($event, 'distance')" /><span>{{ getMultiAngleShot(settings.distance) }}</span></label></div>
+          <div class="rangeHeader"><span>Khoảng cách chụp</span><label class="numberControl"><input :value="settings.distance.toFixed(1)" type="number" min="2" max="10" step="0.1" :disabled="busy" aria-label="拍摄距离数值" @change="setParameter($event, 'distance')" /><span>{{ getMultiAngleShot(settings.distance) }}</span></label></div>
           <input v-model.number="settings.distance" type="range" min="2" max="10" step="0.1" :disabled="busy" aria-label="相机拍摄距离" />
         </div>
       </div>
       <div class="lensRow">
-        <div class="lensControl"><span>镜头</span><div class="lensSwitch" role="group" aria-label="镜头类型"><button type="button" :aria-pressed="settings.lens === 'standard'" :disabled="busy" @click="settings.lens = 'standard'">标准</button><button type="button" :aria-pressed="settings.lens === 'wide'" :disabled="busy" @click="settings.lens = 'wide'">广角</button></div></div>
+        <div class="lensControl"><span>Ống kính</span><div class="lensSwitch" role="group" aria-label="Loại ống kính"><button type="button" :aria-pressed="settings.lens === 'standard'" :disabled="busy" @click="settings.lens = 'standard'">Tiêu chuẩn</button><button type="button" :aria-pressed="settings.lens === 'wide'" :disabled="busy" @click="settings.lens = 'wide'">Góc rộng</button></div></div>
         <span class="angleSummary">相对原图 · {{ Math.round(settings.azimuth) }}° / {{ Math.round(settings.elevation) }}° · {{ getMultiAngleShot(settings.distance) }}</span>
       </div>
       <imageVariationGenerator
@@ -58,8 +58,8 @@
         :aspectRatio="sourceRatio"
         :prompt="buildMultiAnglePrompt(settings)"
         :disabled="props.disabled"
-        label="多角度"
-        buttonLabel="生成新视角"
+        label="Nhiều góc nhìn"
+        buttonLabel="Tạo góc nhìn mới"
         @generated="emit('close')" />
     </section>
   </teleport>

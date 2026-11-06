@@ -2,17 +2,17 @@
   <el-dropdown ref="dropdown" trigger="click" virtualTriggering :virtualRef="trigger" :disabled="disabled || busy || !src" @command="selectAction">
     <template #dropdown>
       <el-dropdown-menu>
-        <el-dropdown-item command="generateSphere">生成720°全景图</el-dropdown-item>
-        <el-dropdown-item command="generateCylinder">生成360°环绕图</el-dropdown-item>
-        <el-dropdown-item command="previewSphere" divided>预览720°全景图</el-dropdown-item>
-        <el-dropdown-item command="previewCylinder">预览360°环绕图</el-dropdown-item>
+        <el-dropdown-item command="generateSphere">Tạo ảnh toàn cảnh 720°</el-dropdown-item>
+        <el-dropdown-item command="generateCylinder">Tạo ảnh vòng quanh 360°</el-dropdown-item>
+        <el-dropdown-item command="previewSphere" divided>Xem ảnh toàn cảnh 720°</el-dropdown-item>
+        <el-dropdown-item command="previewCylinder">Xem ảnh vòng quanh 360°</el-dropdown-item>
       </el-dropdown-menu>
     </template>
   </el-dropdown>
   <el-dialog
     v-model="visible"
     class="panoramaDialog"
-    :title="`预览${mode === 'sphere' ? '720°全景图' : '360°环绕图'}`"
+    :title="`预览${mode === 'sphere' ? 'Ảnh toàn cảnh 720°' : 'Ảnh vòng quanh 360°'}`"
     width="80%"
     alignCenter
     appendToBody
@@ -25,8 +25,8 @@
     <template #header>
       <div class="panoramaHeader">
         <icon-panorama-horizontal :size="20" />
-        <strong>{{ mode === 'sphere' ? '720°全景图' : '360°环绕图' }}</strong>
-        <span>预览与校正</span>
+        <strong>{{ mode === 'sphere' ? 'Ảnh toàn cảnh 720°' : 'Ảnh vòng quanh 360°' }}</strong>
+        <span>Xem trước và hiệu chỉnh</span>
       </div>
     </template>
     <div class="panoramaPanel nodrag nopan nowheel" @pointerdown.stop @mousedown.stop @dblclick.stop @wheel.stop @keydown.stop>

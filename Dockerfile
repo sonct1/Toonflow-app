@@ -15,6 +15,9 @@ RUN bun run build:server \
     && mkdir -p data/workspaces/myProject \
     && chown -R bun:bun data
 
+# Build outputs must be readable by the non-root runtime user.
+RUN chmod -R a+rX /app/build
+
 ENV NODE_ENV=production
 ENV TOONFLOW_DATA_DIR=/app/data
 

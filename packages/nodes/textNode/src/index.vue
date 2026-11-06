@@ -5,18 +5,18 @@
     :topVisible="node.selected"
     topWidth="max-content"
     :downloadUrl="downloadUrl"
-    :downloadName="`${nodeProps.label || '文本'}.md`"
+    :downloadName="`${nodeProps.label || 'Văn bản'}.md`"
     :bottomWidth="660"
     @fullscreen="fullscreen = true; editing = true">
     <div class="textContent" :class="{ empty: !outputs.text.value.trim(), resized }">
       <el-alert v-if="documentState.error" :title="documentState.error" type="error" :closable="false" showIcon>
-        <el-button text size="small" :disabled="generating || textReloading" @click="editing = true">查看并复制当前正文</el-button>
-        <el-button text size="small" :disabled="generating" :loading="textReloading" @click="reloadText">重新读取磁盘</el-button>
+        <el-button text size="small" :disabled="generating || textReloading" @click="editing = true">Xem và sao chép nội dung</el-button>
+        <el-button text size="small" :disabled="generating" :loading="textReloading" @click="reloadText">Đọc lại từ ổ đĩa</el-button>
       </el-alert>
-      <div v-if="outputs.text.value.trim() && previewReady" class="textPreview nopan nowheel" aria-label="文本内容">
+      <div v-if="outputs.text.value.trim() && previewReady" class="textPreview nopan nowheel" aria-label="Nội dung văn bản">
         <markdownPreview :modelValue="outputs.text.value" :files="textReady ? textFiles : undefined" :path="textPath" :active="previewReady" />
       </div>
-      <el-button class="editButton nodrag nopan" :icon="IconEdit" :disabled="generating || !textReady" text @dblclick.stop @click.stop="editing = true">编辑</el-button>
+      <el-button class="editButton nodrag nopan" :icon="IconEdit" :disabled="generating || !textReady" text @dblclick.stop @click.stop="editing = true">Chỉnh sửa</el-button>
     </div>
     <template #bottom>
       <el-card class="promptCard" shadow="never" :bodyStyle="{ padding: '14px 16px 12px' }">
@@ -38,15 +38,15 @@
             </el-option-group>
           </el-select>
           <div class="promptActions">
-            <el-button class="sendButton" :icon="IconArrowUp" :loading="generating" :disabled="!prompt.trim() || !selectedModel || generating || !textReady" title="生成" aria-label="生成" @click="generateText" />
+            <el-button class="sendButton" :icon="IconArrowUp" :loading="generating" :disabled="!prompt.trim() || !selectedModel || generating || !textReady" title="Tạo" aria-label="Tạo" @click="generateText" />
           </div>
         </div>
       </el-card>
     </template>
   </nodeSkeleton>
-  <el-dialog v-model="editing" title="编辑文本" width="min(860px, calc(100vw - 32px))" :fullscreen="fullscreen" alignCenter appendToBody @closed="fullscreen = false">
+  <el-dialog v-model="editing" title="Chỉnh sửa văn bản" width="min(860px, calc(100vw - 32px))" :fullscreen="fullscreen" alignCenter appendToBody @closed="fullscreen = false">
     <div class="textEditor" :class="{ fullscreen }">
-      <markdownEditor v-model="outputs.text.value" :files="textReady ? textFiles : undefined" :path="textPath" :active="editing" :disabled="generating || textReloading" :readonly="!!documentState.error" ariaLabel="编辑文本内容" />
+      <markdownEditor v-model="outputs.text.value" :files="textReady ? textFiles : undefined" :path="textPath" :active="editing" :disabled="generating || textReloading" :readonly="!!documentState.error" ariaLabel="Chỉnh sửa nội dung văn bản" />
     </div>
   </el-dialog>
 </template>
@@ -71,12 +71,12 @@ defineOptions({
   inheritAttrs: false,
   icon: IconFileText,
   handles: [
-    { id: "in", type: "target", dataType: ["VIDEO", "IMAGE", "STRING", "FILE"], label: "视频、图片、文本、文件输入" },
-    { id: "text", type: "source", dataType: "STRING", label: "文本输出" },
+    { id: "in", type: "target", dataType: ["VIDEO", "IMAGE", "STRING", "FILE"], label: "Video, ảnh, văn bản và tệp đầu vào" },
+    { id: "text", type: "source", dataType: "STRING", label: "Văn bản đầu ra" },
   ] satisfies NodeHandle[],
 });
 const { node, nodeProps, outputs, ai, files, nodeEvent, previewReady } = useNode({
-  label: "文本",
+  label: "Văn bản",
   onModelsChanged: () => void loadModels(),
   outputs: { text: { dataType: "STRING", value: "" } },
 });

@@ -10,18 +10,18 @@
     :fullscreenVisible="false"
     style="width: 360px">
     <template #topActions>
-      <el-button :icon="IconTextRecognition" :loading="transcribing" :disabled="!outputFile || uploading || actions?.processing" text title="音频转文本" aria-label="音频转文本" @click.stop="transcribe">转文本</el-button>
-      <el-button v-if="transcribing" :icon="IconPlayerStop" text title="取消转文本" aria-label="取消转文本" @click.stop="cancelTranscription">取消</el-button>
-      <el-button :icon="IconScissors" :disabled="!previewUrl || uploading || transcribing || actions?.processing" text title="截取音频" aria-label="截取音频" @click.stop="actions?.open('clip')">截取</el-button>
-      <el-button :icon="IconGauge" :disabled="!previewUrl || uploading || transcribing || actions?.processing" text title="音频变速" aria-label="音频变速" @click.stop="actions?.open('speed')">变速</el-button>
+      <el-button :icon="IconTextRecognition" :loading="transcribing" :disabled="!outputFile || uploading || actions?.processing" text title="Chuyển âm thanh thành văn bản" aria-label="Chuyển âm thanh thành văn bản" @click.stop="transcribe">Chuyển thành văn bản</el-button>
+      <el-button v-if="transcribing" :icon="IconPlayerStop" text title="Hủy chuyển thành văn bản" aria-label="Hủy chuyển thành văn bản" @click.stop="cancelTranscription">Hủy</el-button>
+      <el-button :icon="IconScissors" :disabled="!previewUrl || uploading || transcribing || actions?.processing" text title="Cắt âm thanh" aria-label="Cắt âm thanh" @click.stop="actions?.open('clip')">Cắt đoạn</el-button>
+      <el-button :icon="IconGauge" :disabled="!previewUrl || uploading || transcribing || actions?.processing" text title="Đổi tốc độ âm thanh" aria-label="Đổi tốc độ âm thanh" @click.stop="actions?.open('speed')">Đổi tốc độ</el-button>
       <el-button
         :icon="IconTransfer"
         :loading="uploading"
         :disabled="transcribing || actions?.processing"
         text
-        title="替换音频"
-        aria-label="替换音频"
-        @click.stop="fileInput?.click()">替换音频</el-button>
+        title="Thay âm thanh"
+        aria-label="Thay âm thanh"
+        @click.stop="fileInput?.click()">Thay âm thanh</el-button>
     </template>
     <div class="audioContent nopan">
       <audioPlayer
@@ -32,17 +32,17 @@
         :mimeType="outputFile?.mimeType"
         v-model:pcmOptions="pcmOptions"
         @loadedmetadata="updateNodeInternals" />
-      <input ref="fileInput" class="fileInput" type="file" accept="audio/*" aria-label="选择音频" :disabled="uploading || transcribing || actions?.processing" @change="uploadAudio" />
+      <input ref="fileInput" class="fileInput" type="file" accept="audio/*" aria-label="Chọn âm thanh" :disabled="uploading || transcribing || actions?.processing" @change="uploadAudio" />
       <el-button
         v-if="!outputs.audio"
         class="uploadButton nodrag nopan"
         :icon="IconUpload"
         text
         :loading="uploading"
-        title="上传音频"
-        aria-label="上传音频"
+        title="Tải âm thanh lên"
+        aria-label="Tải âm thanh lên"
         @dblclick.stop
-        @click.stop="fileInput?.click()">上传</el-button>
+        @click.stop="fileInput?.click()">Tải lên</el-button>
     </div>
     <template v-if="actions?.mode === 'speed'" #bottom><div ref="speedTarget" /></template>
   </nodeSkeleton>
@@ -63,10 +63,10 @@ import audioActions from "./components/audioActions.vue";
 defineOptions({
   inheritAttrs: false,
   icon: IconMusic,
-  handles: [{ id: "audio", type: "source", dataType: "AUDIO", label: "音频输出" }] satisfies NodeHandle[],
+  handles: [{ id: "audio", type: "source", dataType: "AUDIO", label: "Âm thanh đầu ra" }] satisfies NodeHandle[],
 });
 const { node, nodeProps, outputs, nodeEvent, files, updateNodeInternals } = useNode({
-  label: "音频",
+  label: "Âm thanh",
 });
 const fileInput = ref<HTMLInputElement>();
 const uploading = ref(false);

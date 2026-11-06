@@ -2,7 +2,7 @@
   <span class="modelLabel">
     <modelIcon v-if="modelId && modelIcon" :model="modelId" aria-hidden="true" />
     <span class="labelText">{{ label }}</span>
-    <el-tag v-if="providerId?.toLowerCase() === 'toonflow'" class="officialTag" type="info" size="small" effect="plain">官方</el-tag>
+    <el-tag v-if="providerId?.toLowerCase() === 'toonflow'" class="officialTag" type="info" size="small" effect="plain">Chính thức</el-tag>
   </span>
 </template>
 

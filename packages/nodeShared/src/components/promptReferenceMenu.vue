@@ -1,17 +1,17 @@
 <template>
-  <div ref="menu" class="referenceMenu nodrag nopan nowheel" :style="menuStyle" role="dialog" aria-label="引用素材" :aria-busy="busy" @pointerdown.stop @mousedown.stop @keydown="handleKeydown">
+  <div ref="menu" class="referenceMenu nodrag nopan nowheel" :style="menuStyle" role="dialog" aria-label="Tham chiếu tư liệu" :aria-busy="busy" @pointerdown.stop @mousedown.stop @keydown="handleKeydown">
     <label class="searchBox">
       <icon-search :size="16" aria-hidden="true" />
-      <input v-model="search" type="search" placeholder="搜索" aria-label="搜索参考和素材" :disabled="busy" @focus="activeKey = ''" />
+      <input v-model="search" type="search" placeholder="Tìm kiếm" aria-label="Tìm tham chiếu và tư liệu" :disabled="busy" @focus="activeKey = ''" />
     </label>
     <div class="menuBody" @scroll="updatePosition">
-      <section v-if="!search.trim() || matchingReferences.length" class="referenceSection" aria-label="参考引用">
+      <section v-if="!search.trim() || matchingReferences.length" class="referenceSection" aria-label="Tham chiếu">
         <button v-for="item in matchingReferences" :key="item.id" type="button" class="menuItem" :class="{ active: activeKey === `reference:${item.id}` }" :data-key="`reference:${item.id}`" :title="item.label || item.name" :disabled="busy" @mousedown.prevent @mouseenter="activeGroup = undefined; activeKey = `reference:${item.id}`" @focus="activeGroup = undefined; activeKey = `reference:${item.id}`" @click="emit('select', item.id)">
           <promptReferenceThumbnail :dataType="item.dataType" :avatar="item.avatar" />
           <span class="itemName">{{ item.label || item.name }}</span>
         </button>
       </section>
-      <section v-if="!search.trim()" class="materialSection" aria-label="素材引用">
+      <section v-if="!search.trim()" class="materialSection" aria-label="Tư liệu tham chiếu">
         <button v-for="group in groups" :key="group.type" type="button" class="menuItem categoryItem" :class="{ active: activeGroup === group.type || activeKey === `group:${group.type}` }" :data-key="`group:${group.type}`" :disabled="busy || !group.items.length" aria-haspopup="true" :aria-expanded="activeGroup === group.type" @mousedown.prevent @mouseenter="openGroup(group.type)" @focus="openGroup(group.type)" @click="openGroup(group.type)">
           <component :is="group.icon" class="itemIcon" :size="18" aria-hidden="true" />
           <span class="itemName">{{ group.label }}</span>
@@ -30,7 +30,7 @@
     </div>
     <button v-if="hasAssetLibrary" type="button" class="menuItem libraryItem" :class="{ active: activeKey === 'library' }" data-key="library" :disabled="busy" @mousedown.prevent @mouseenter="activeGroup = undefined; activeKey = 'library'" @focus="activeGroup = undefined; activeKey = 'library'" @click="emit('selectAsset')">
       <icon-folder class="itemIcon" :size="18" aria-hidden="true" />
-      <span class="itemName">全局素材库</span>
+      <span class="itemName">Thư viện tư liệu chung</span>
     </button>
     <div v-if="activeGroup && !search.trim()" ref="submenu" class="materialPopup" :style="submenuStyle" :aria-label="activeCategory?.label">
       <button v-for="item in activeCategory?.items" :key="item.id" type="button" class="menuItem" :class="{ active: activeKey === `material:${item.id}` }" :data-key="`material:${item.id}`" :title="item.name" :disabled="busy || item.disabled" @mousedown.prevent @mouseenter="activeKey = `material:${item.id}`" @focus="activeKey = `material:${item.id}`" @click="emit('selectMaterial', item.id)">
@@ -66,10 +66,10 @@ const menuPosition = ref({ left: "0px", top: "0px" });
 const submenuStyle = ref({ left: "0px", top: "0px" });
 const menuStyle = computed(() => ({ ...menuPosition.value, zIndex: props.zIndex }));
 const categories = [
-  { type: "IMAGE", label: "图片", icon: IconPhoto },
-  { type: "VIDEO", label: "视频", icon: IconVideo },
-  { type: "AUDIO", label: "音频", icon: IconMusic },
-  { type: "STRING", label: "文本", icon: IconFileText },
+  { type: "IMAGE", label: "Hình ảnh", icon: IconPhoto },
+  { type: "VIDEO", label: "Video", icon: IconVideo },
+  { type: "AUDIO", label: "Âm thanh", icon: IconMusic },
+  { type: "STRING", label: "Văn bản", icon: IconFileText },
 ] as const;
 const groups = computed(() => categories.map(group => ({ ...group, items: props.materials.filter(item => item.dataType === group.type) })));
 const matches = (name: string) => name.toLocaleLowerCase().includes(search.value.trim().toLocaleLowerCase());

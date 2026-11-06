@@ -11,22 +11,22 @@
     :style="{ width: previewUrl && imageWidth ? `${imageWidth + 18}px` : undefined }">
     <template v-if="editor?.mode" #top><div ref="paintToolbar" /></template>
     <template #topActions>
-      <el-button class="panoramaButton" :icon="IconPanoramaHorizontal" :disabled="uploading || editor?.busy || lighting?.generating || multiAngle?.generating || gridSplit?.splitting || inpaintPrompt?.creating || panorama?.busy || !previewUrl" text title="全景图" aria-label="全景图" @click.stop="panorama?.open($event)">全景图<icon-chevron-down class="menuChevron" :size="14" /></el-button>
-      <el-button :icon="IconBrush" :disabled="uploading || lighting?.generating || multiAngle?.generating || panorama?.busy || !previewUrl || gridSplit?.splitting" text title="局部重绘" aria-label="局部重绘" @click.stop="startEditor('inpaint')">局部重绘</el-button>
-      <el-button :icon="IconSun" :disabled="uploading || lighting?.generating || multiAngle?.generating || panorama?.busy || !previewUrl || gridSplit?.splitting" text title="打光" aria-label="打光" @click.stop="openLighting">打光</el-button>
-      <el-button :icon="IconCameraRotate" :disabled="uploading || lighting?.generating || multiAngle?.generating || panorama?.busy || !previewUrl || gridSplit?.splitting" text title="多角度" aria-label="多角度" @click.stop="openMultiAngle">多角度</el-button>
-      <el-button :icon="IconLayoutGrid" :disabled="uploading || lighting?.generating || multiAngle?.generating || panorama?.busy || !previewUrl" :loading="gridSplit?.splitting" text title="宫格切分" aria-label="宫格切分" @click.stop="gridSplit?.open($event)">宫格切分</el-button>
+      <el-button class="panoramaButton" :icon="IconPanoramaHorizontal" :disabled="uploading || editor?.busy || lighting?.generating || multiAngle?.generating || gridSplit?.splitting || inpaintPrompt?.creating || panorama?.busy || !previewUrl" text title="Ảnh toàn cảnh" aria-label="Ảnh toàn cảnh" @click.stop="panorama?.open($event)">Ảnh toàn cảnh<icon-chevron-down class="menuChevron" :size="14" /></el-button>
+      <el-button :icon="IconBrush" :disabled="uploading || lighting?.generating || multiAngle?.generating || panorama?.busy || !previewUrl || gridSplit?.splitting" text title="Vẽ lại vùng chọn" aria-label="Vẽ lại vùng chọn" @click.stop="startEditor('inpaint')">Vẽ lại vùng chọn</el-button>
+      <el-button :icon="IconSun" :disabled="uploading || lighting?.generating || multiAngle?.generating || panorama?.busy || !previewUrl || gridSplit?.splitting" text title="Chiếu sáng" aria-label="Chiếu sáng" @click.stop="openLighting">Chiếu sáng</el-button>
+      <el-button :icon="IconCameraRotate" :disabled="uploading || lighting?.generating || multiAngle?.generating || panorama?.busy || !previewUrl || gridSplit?.splitting" text title="Nhiều góc nhìn" aria-label="Nhiều góc nhìn" @click.stop="openMultiAngle">Nhiều góc nhìn</el-button>
+      <el-button :icon="IconLayoutGrid" :disabled="uploading || lighting?.generating || multiAngle?.generating || panorama?.busy || !previewUrl" :loading="gridSplit?.splitting" text title="Chia ảnh theo lưới" aria-label="Chia ảnh theo lưới" @click.stop="gridSplit?.open($event)">Chia ảnh theo lưới</el-button>
       <el-button
         :icon="IconTransfer"
         :loading="uploading"
         :disabled="lighting?.generating || multiAngle?.generating || panorama?.busy"
         text
-        title="替换图片"
-        aria-label="替换图片"
-        @click.stop="fileInput?.click()">替换图片</el-button>
+        title="Thay ảnh"
+        aria-label="Thay ảnh"
+        @click.stop="fileInput?.click()">Thay ảnh</el-button>
     </template>
     <template #topRightActions>
-      <el-button :icon="IconPencil" :disabled="uploading || lighting?.generating || multiAngle?.generating || panorama?.busy || !previewUrl || gridSplit?.splitting" text title="标记" aria-label="标记" @click.stop="startEditor('mark')" />
+      <el-button :icon="IconPencil" :disabled="uploading || lighting?.generating || multiAngle?.generating || panorama?.busy || !previewUrl || gridSplit?.splitting" text title="Đánh dấu" aria-label="Đánh dấu" @click.stop="startEditor('mark')" />
     </template>
     <div class="imageContent nopan" :class="{ empty: !outputFile }">
       <imageEditor
@@ -35,20 +35,20 @@
         :src="previewUrl"
         :toolbarTarget="paintToolbar"
         :disabled="uploading || lighting?.generating || multiAngle?.generating || panorama?.busy"
-        alt="节点图片"
+        alt="Ảnh của node"
         @load="resizeImage"
-        @error="ElMessage.error('无法预览该图片')" />
-      <input ref="fileInput" class="fileInput" type="file" accept="image/*" aria-label="选择图片" :disabled="uploading || lighting?.generating || multiAngle?.generating || panorama?.busy" @change="uploadImage" />
+        @error="ElMessage.error('Không thể xem trước ảnh này')" />
+      <input ref="fileInput" class="fileInput" type="file" accept="image/*" aria-label="Chọn ảnh" :disabled="uploading || lighting?.generating || multiAngle?.generating || panorama?.busy" @change="uploadImage" />
       <el-button
         v-if="!outputFile"
         class="nodrag nopan"
         :icon="IconUpload"
         text
         :loading="uploading"
-        title="上传图片"
-        aria-label="上传图片"
+        title="Tải ảnh lên"
+        aria-label="Tải ảnh lên"
         @dblclick.stop
-        @click.stop="fileInput?.click()">上传</el-button>
+        @click.stop="fileInput?.click()">Tải lên</el-button>
     </div>
     <template v-if="lightingVisible || multiAngleVisible || editor?.mode === 'inpaint'" #bottom>
       <div v-if="lightingVisible" ref="lightingTarget" />
@@ -86,12 +86,12 @@ defineOptions({
   inheritAttrs: false,
   icon: IconPhoto,
   handles: [
-    { id: "in", type: "target", dataType: "IMAGE", label: "来源图片" },
-    { id: "image", type: "source", dataType: "IMAGE", label: "图片输出" },
+    { id: "in", type: "target", dataType: "IMAGE", label: "Ảnh nguồn" },
+    { id: "image", type: "source", dataType: "IMAGE", label: "Ảnh đầu ra" },
   ] satisfies NodeHandle[],
 });
 const { node, nodeProps, outputs, nodeEvent, files, updateNodeInternals } = useNode({
-  label: "图片",
+  label: "Hình ảnh",
 });
 const fileInput = ref<HTMLInputElement>();
 const gridSplit = ref<InstanceType<typeof imageGridSplit>>();

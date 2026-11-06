@@ -37,10 +37,10 @@
       </div>
     </div>
     <div class="playerControls">
-      <el-button class="playButton nodrag nopan nowheel" :icon="playing ? IconPlayerPause : IconPlayerPlay" :disabled="!duration || failed" circle :aria-label="playing ? '暂停音频' : '播放音频'" :title="playing ? '暂停' : '播放'" @pointerdown.stop @mousedown.stop @dblclick.stop @click="togglePlayback" />
+      <el-button class="playButton nodrag nopan nowheel" :icon="playing ? IconPlayerPause : IconPlayerPlay" :disabled="!duration || failed" circle :aria-label="playing ? '暂停音频' : '播放音频'" :title="playing ? 'Tạm dừng' : 'Phát'" @pointerdown.stop @mousedown.stop @dblclick.stop @click="togglePlayback" />
       <span class="timeLabel"><slot name="time"><span>{{ formatTime(currentTime) }}</span><span class="timeSeparator">/</span>{{ formatTime(duration) }}</slot></span>
       <div class="volumeControl nodrag nopan nowheel" @pointerdown.stop @mousedown.stop @dblclick.stop>
-        <el-button class="volumeButton" :icon="muted || !volume ? IconVolumeOff : IconVolume" text circle :disabled="failed" :aria-label="muted || !volume ? '取消静音' : '静音音频'" :title="muted || !volume ? '取消静音' : '静音'" :aria-pressed="muted || !volume" @click="toggleMute" />
+        <el-button class="volumeButton" :icon="muted || !volume ? IconVolumeOff : IconVolume" text circle :disabled="failed" :aria-label="muted || !volume ? 'Bật tiếng' : '静音音频'" :title="muted || !volume ? 'Bật tiếng' : '静音'" :aria-pressed="muted || !volume" @click="toggleMute" />
         <input class="volumeInput" type="range" min="0" max="100" :value="muted ? 0 : volume" :disabled="failed" aria-label="音频音量" @input="setVolume" />
       </div>
     </div>

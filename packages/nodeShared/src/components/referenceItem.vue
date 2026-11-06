@@ -2,7 +2,7 @@
   <vue-draggable
     v-model="items"
     class="referenceList"
-    aria-label="输入引用"
+    aria-label="Tham chiếu đầu vào"
     :animation="180"
     direction="horizontal"
     ghostClass="referenceGhost"

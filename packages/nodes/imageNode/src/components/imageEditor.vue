@@ -1,14 +1,14 @@
 <template>
   <div class="imageEditor" :class="{ editing: mode, previewUnavailable: preparingPreview || previewError }" :style="{ '--imageRatio': imageRatio }" :aria-busy="preparingPreview">
     <img ref="sourceImage" :src="previewSrc" :alt="alt" draggable="false" @load="imageLoaded" @error="handleError" />
-    <div v-if="preparingPreview || previewError" class="previewStatus" role="status">{{ preparingPreview ? "正在生成兼容预览…" : previewError }}</div>
+    <div v-if="preparingPreview || previewError" class="previewStatus" role="status">{{ preparingPreview ? "Đang chuẩn bị bản xem trước…" : previewError }}</div>
     <canvas
       v-if="mode"
       ref="paintCanvas"
       class="paintCanvas nodrag nopan nowheel"
       :class="{ inpaint: mode === 'inpaint' }"
       :style="{ aspectRatio: `${sourceImage?.naturalWidth} / ${sourceImage?.naturalHeight}`, cursor: tool === 'text' ? 'text' : 'crosshair' }"
-      :aria-label="mode === 'inpaint' ? '涂抹需要重绘的区域' : '图片标记画布'"
+      :aria-label="mode === 'inpaint' ? 'Tô vùng cần vẽ lại' : 'Bảng đánh dấu ảnh'"
       @pointerdown.stop.prevent="startStroke"
       @pointermove.stop.prevent="moveStroke"
       @pointerup.stop.prevent="finishStroke"
@@ -24,8 +24,8 @@
       class="textInput nodrag nopan nowheel"
       :style="textStyle"
       :rows="Math.max(1, textDraft.text.split('\n').length)"
-      aria-label="标记文本"
-      placeholder="输入文本"
+      aria-label="Văn bản đánh dấu"
+      placeholder="Nhập văn bản"
       wrap="off"
       @pointerdown.stop
       @mousedown.stop
@@ -35,7 +35,7 @@
   </div>
   <teleport v-if="mode && toolbarTarget" :to="toolbarTarget">
     <div class="paintToolbar" @keydown.esc.stop.prevent="!busy && cancel()">
-      <el-button class="exitButton" :icon="IconX" :disabled="busy" text :title="mode === 'mark' ? '取消标记' : '取消局部重绘'" :aria-label="mode === 'mark' ? '取消标记' : '取消局部重绘'" @click="cancel">{{ mode === 'mark' ? '标记' : '局部重绘' }}</el-button>
+      <el-button class="exitButton" :icon="IconX" :disabled="busy" text :title="mode === 'mark' ? 'Hủy đánh dấu' : 'Hủy vẽ lại vùng chọn'" :aria-label="mode === 'mark' ? 'Hủy đánh dấu' : 'Hủy vẽ lại vùng chọn'" @click="cancel">{{ mode === 'mark' ? 'Đánh dấu' : 'Vẽ lại vùng chọn' }}</el-button>
       <el-button :icon="IconBrush" :type="tool === 'brush' ? 'primary' : 'default'" :disabled="busy" text title="画笔" aria-label="画笔" :aria-pressed="tool === 'brush'" @click="tool = 'brush'" />
       <template v-if="mode === 'mark'">
         <el-button :icon="IconSquare" :type="tool === 'rectangle' ? 'primary' : 'default'" :disabled="busy" text title="矩形" aria-label="矩形" :aria-pressed="tool === 'rectangle'" @click="tool = 'rectangle'" />
@@ -44,11 +44,11 @@
       </template>
       <el-button :icon="IconEraser" :type="tool === 'eraser' ? 'primary' : 'default'" :disabled="busy" text title="橡皮擦" aria-label="橡皮擦" :aria-pressed="tool === 'eraser'" @click="tool = 'eraser'" />
       <input v-if="mode === 'mark'" v-model="color" type="color" class="brushColor" :disabled="busy" title="画笔颜色" aria-label="画笔颜色" />
-      <label class="brushSize">{{ tool === 'text' ? '字号' : '粗细' }}<input v-model.number="toolSize" type="range" :min="tool === 'text' ? 12 : 2" max="60" :disabled="busy" :aria-label="tool === 'text' ? '文本字号' : '画笔粗细'" /><span>{{ toolSize }}</span></label>
-      <el-button :icon="IconArrowBackUp" :disabled="busy || !strokeCount" text title="撤销" aria-label="撤销" @click="undo" />
-      <el-button :icon="IconArrowForwardUp" :disabled="busy || strokeCount === historyLength" text title="恢复" aria-label="恢复" @click="redo" />
-      <el-button :icon="IconTrash" :disabled="busy || !hasDrawing" text title="清空标记" aria-label="清空标记" @click="clear" />
-      <el-button v-if="mode === 'mark'" class="saveButton" :icon="IconCheck" :disabled="!hasDrawing && !textDraft?.text.trim()" :loading="busy" type="primary" @click="saveMark">保存</el-button>
+      <label class="brushSize">{{ tool === 'text' ? 'Cỡ chữ' : 'Độ dày' }}<input v-model.number="toolSize" type="range" :min="tool === 'text' ? 12 : 2" max="60" :disabled="busy" :aria-label="tool === 'text' ? 'Cỡ chữ' : 'Độ dày nét bút'" /><span>{{ toolSize }}</span></label>
+      <el-button :icon="IconArrowBackUp" :disabled="busy || !strokeCount" text title="Hoàn tác" aria-label="Hoàn tác" @click="undo" />
+      <el-button :icon="IconArrowForwardUp" :disabled="busy || strokeCount === historyLength" text title="Làm lại" aria-label="Làm lại" @click="redo" />
+      <el-button :icon="IconTrash" :disabled="busy || !hasDrawing" text title="Xóa toàn bộ đánh dấu" aria-label="Xóa toàn bộ đánh dấu" @click="clear" />
+      <el-button v-if="mode === 'mark'" class="saveButton" :icon="IconCheck" :disabled="!hasDrawing && !textDraft?.text.trim()" :loading="busy" type="primary" @click="saveMark">Lưu</el-button>
     </div>
   </teleport>
 </template>

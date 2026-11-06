@@ -1,7 +1,7 @@
 <template>
   <nodeSkeleton v-bind="nodeProps" style="width: 320px">
-    <button v-loading="modelLoading" type="button" class="directorContent nopan" :disabled="modelLoading" :title="modelError || undefined" aria-label="打开导演台" @dblclick.stop @click.stop="openEditor">
-      <img v-if="preview" class="scenePreview" :src="preview" alt="最后镜头" draggable="false" />
+    <button v-loading="modelLoading" type="button" class="directorContent nopan" :disabled="modelLoading" :title="modelError || undefined" aria-label="Mở bàn đạo diễn" @dblclick.stop @click.stop="openEditor">
+      <img v-if="preview" class="scenePreview" :src="preview" alt="Cảnh cuối" draggable="false" />
       <div v-else class="emptyPreview">
         <icon-cube3d-sphere :size="38" stroke="1.2" />
       </div>
@@ -48,9 +48,9 @@ type ModelDocument = z.infer<typeof modelDocumentSchema>;
 defineOptions({
   inheritAttrs: false,
   icon: IconCube3dSphere,
-  handles: [{ id: "in", type: "target", dataType: ["STRING", "IMAGE", "VIDEO"], label: "文本、图片、视频输入" }] satisfies NodeHandle[],
+  handles: [{ id: "in", type: "target", dataType: ["STRING", "IMAGE", "VIDEO"], label: "Văn bản, ảnh và video đầu vào" }] satisfies NodeHandle[],
 });
-const { node, nodeProps, previewReady, ai, files, nodeEvent } = useNode({ label: "3D导演台", onModelsChanged: () => void loadModels() });
+const { node, nodeProps, previewReady, ai, files, nodeEvent } = useNode({ label: "Bàn đạo diễn 3D", onModelsChanged: () => void loadModels() });
 const vLoading = ElLoading.directive;
 const { addNodes, findNode, getNodes, nodeTypes, removeNodes } = useVueFlow();
 const mediaFiles = useNodeFiles();

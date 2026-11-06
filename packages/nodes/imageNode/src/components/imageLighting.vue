@@ -1,9 +1,9 @@
 <template>
   <teleport :to="target ?? 'body'" :disabled="!target">
-    <section v-show="!!target" class="lightingPanel nodrag nopan nowheel" aria-label="图片打光" @pointerdown.stop @mousedown.stop @dblclick.stop @wheel.stop @keydown.stop>
+    <section v-show="!!target" class="lightingPanel nodrag nopan nowheel" aria-label="Chiếu sáng ảnh" @pointerdown.stop @mousedown.stop @dblclick.stop @wheel.stop @keydown.stop>
       <header class="panelHeader">
-        <div><icon-sun :size="18" /><strong>打光</strong><span>调整光线，保留画面</span></div>
-        <el-button :icon="IconX" text :disabled="generating" aria-label="关闭打光" @click="emit('close')" />
+        <div><icon-sun :size="18" /><strong>Chiếu sáng</strong><span>Điều chỉnh ánh sáng, giữ bố cục</span></div>
+        <el-button :icon="IconX" text :disabled="generating" aria-label="Đóng chiếu sáng" @click="emit('close')" />
       </header>
       <div class="lightingWorkspace">
         <div class="stageColumn">
@@ -28,31 +28,31 @@
           </div>
         </div>
         <div class="parameterColumn">
-          <div class="lightSelector" role="group" aria-label="编辑光源">
-            <button type="button" :aria-pressed="activeLight === 'key'" :disabled="busy" @click="selectLight('key')">主光源</button>
-            <button type="button" :aria-pressed="activeLight === 'rim'" :disabled="busy" @click="selectLight('rim')">轮廓光源</button>
+          <div class="lightSelector" role="group" aria-label="Chỉnh nguồn sáng">
+            <button type="button" :aria-pressed="activeLight === 'key'" :disabled="busy" @click="selectLight('key')">Nguồn sáng chính</button>
+            <button type="button" :aria-pressed="activeLight === 'rim'" :disabled="busy" @click="selectLight('rim')">Nguồn sáng viền</button>
           </div>
-          <label class="rangeControl"><span>水平角 <b>{{ Math.round(activeAzimuth) }}°</b></span><input v-model.number="activeAzimuth" type="range" min="-180" max="180" :disabled="busy" :aria-label="`${activeLightLabel}水平角`" /></label>
-          <label class="rangeControl"><span>俯仰角 <b>{{ Math.round(activeElevation) }}°</b></span><input v-model.number="activeElevation" type="range" min="-90" max="90" :disabled="busy" :aria-label="`${activeLightLabel}俯仰角`" /></label>
-          <label class="rangeControl"><span>光照强度 <b>{{ activeBrightness }}%</b></span><input v-model.number="activeBrightness" type="range" min="0" max="100" :disabled="busy" :aria-label="`${activeLightLabel}亮度`" /></label>
+          <label class="rangeControl"><span>Góc ngang <b>{{ Math.round(activeAzimuth) }}°</b></span><input v-model.number="activeAzimuth" type="range" min="-180" max="180" :disabled="busy" :aria-label="`${activeLightLabel}水平角`" /></label>
+          <label class="rangeControl"><span>Góc nghiêng <b>{{ Math.round(activeElevation) }}°</b></span><input v-model.number="activeElevation" type="range" min="-90" max="90" :disabled="busy" :aria-label="`${activeLightLabel}俯仰角`" /></label>
+          <label class="rangeControl"><span>Cường độ ánh sáng <b>{{ activeBrightness }}%</b></span><input v-model.number="activeBrightness" type="range" min="0" max="100" :disabled="busy" :aria-label="`${activeLightLabel}亮度`" /></label>
           <div class="colorControl">
-            <span>光线色彩</span>
-            <div><input type="color" :value="activeColor" :disabled="busy" :aria-label="`${activeLightLabel}颜色`" @input="activeColor = ($event.target as HTMLInputElement).value" /><el-button text size="small" :disabled="busy || activeColor.toLowerCase() === '#ffffff'" @click="activeColor = '#ffffff'">{{ activeColor.toLowerCase() === '#ffffff' ? '白光' : '还原' }}</el-button></div>
+            <span>Màu ánh sáng</span>
+            <div><input type="color" :value="activeColor" :disabled="busy" :aria-label="`${activeLightLabel}颜色`" @input="activeColor = ($event.target as HTMLInputElement).value" /><el-button text size="small" :disabled="busy || activeColor.toLowerCase() === '#ffffff'" @click="activeColor = '#ffffff'">{{ activeColor.toLowerCase() === '#ffffff' ? 'Ánh sáng trắng' : 'Khôi phục' }}</el-button></div>
           </div>
-          <div class="switchControl"><span>启用轮廓光</span><el-switch v-model="settings.rimLight" :disabled="busy" aria-label="轮廓光" /></div>
+          <div class="switchControl"><span>Bật ánh sáng viền</span><el-switch v-model="settings.rimLight" :disabled="busy" aria-label="Ánh sáng viền" /></div>
         </div>
       </div>
       <div class="presetSection">
-        <span class="sectionLabel">光影预设</span>
-        <div class="presetGrid" role="group" aria-label="光影预设">
+        <span class="sectionLabel">Thiết lập ánh sáng mẫu</span>
+        <div class="presetGrid" role="group" aria-label="Thiết lập ánh sáng mẫu">
           <button v-for="preset in lightingPresets" :key="preset.id" type="button" :class="{ active: settings.preset === preset.id }" :disabled="busy" :aria-pressed="settings.preset === preset.id" @click="selectPreset(preset)">{{ preset.label }}</button>
         </div>
       </div>
       <div class="smartSection">
-        <div class="switchControl"><span>智能模式</span><el-switch v-model="settings.smartMode" :disabled="busy" aria-label="智能模式" /></div>
-        <el-input v-if="settings.smartMode" v-model="settings.smartDesc" type="textarea" :autosize="{ minRows: 2, maxRows: 5 }" :disabled="busy" placeholder="描述你想要的光影、氛围或局部细节…" aria-label="智能打光描述" />
+        <div class="switchControl"><span>Chế độ thông minh</span><el-switch v-model="settings.smartMode" :disabled="busy" aria-label="Chế độ thông minh" /></div>
+        <el-input v-if="settings.smartMode" v-model="settings.smartDesc" type="textarea" :autosize="{ minRows: 2, maxRows: 5 }" :disabled="busy" placeholder="Mô tả ánh sáng, không khí hoặc chi tiết mong muốn…" aria-label="Mô tả chiếu sáng thông minh" />
       </div>
-      <imageVariationGenerator v-model:generating="generating" :settings="settings" :source="source" :aspectRatio="sourceRatio" :prompt="buildLightingPrompt(settings)" :disabled="disabled" label="打光" @generated="emit('close')" />
+      <imageVariationGenerator v-model:generating="generating" :settings="settings" :source="source" :aspectRatio="sourceRatio" :prompt="buildLightingPrompt(settings)" :disabled="disabled" label="Chiếu sáng" @generated="emit('close')" />
     </section>
   </teleport>
 </template>
