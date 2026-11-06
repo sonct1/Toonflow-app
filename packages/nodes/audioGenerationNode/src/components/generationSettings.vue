@@ -1,7 +1,7 @@
 <template>
   <el-popover v-model:visible="settingsVisible" trigger="click" placement="top-start" width="min(380px, calc(100vw - 24px))" :disabled="disabled" :showArrow="false" :popperStyle="{ padding: '16px' }">
     <template #reference>
-      <el-button class="settingsButton" text size="small" :disabled="disabled" :aria-expanded="settingsVisible" aria-label="Cài đặt tạo âm thanh">
+      <el-button class="settingsButton" text size="small" :disabled="disabled" :aria-expanded="settingsVisible" aria-label="音频生成设置">
         <icon-adjustments-horizontal :size="15" aria-hidden="true" />
         <span>{{ languageLabel }} · {{ sampleRate / 1000 }}k · {{ format }}</span>
         <component :is="settingsVisible ? IconChevronDown : IconChevronUp" :size="14" aria-hidden="true" />
@@ -10,20 +10,20 @@
     <div class="generationSettings nodrag nopan nowheel" @pointerdown.stop @mousedown.stop @dblclick.stop @keydown.stop @wheel.stop>
       <div class="settingsHeader">
         <icon-adjustments-horizontal :size="17" aria-hidden="true" />
-        <span>Thông số âm thanh</span>
+        <span>音频参数</span>
       </div>
       <div class="settingsFields">
         <div class="settingField">
-          <span class="fieldLabel">Ngôn ngữ</span>
-          <el-segmented v-model="language" :options="languageOptions" :disabled="disabled" block aria-label="Ngôn ngữ âm thanh" />
+          <span class="fieldLabel">语种</span>
+          <el-segmented v-model="language" :options="languageOptions" :disabled="disabled" block aria-label="音频语种" />
         </div>
         <div class="settingField">
-          <span class="fieldLabel">Tần số lấy mẫu</span>
-          <el-segmented v-model="sampleRate" :options="sampleRates" :disabled="disabled" block aria-label="Tần số lấy mẫu âm thanh" />
+          <span class="fieldLabel">采样率</span>
+          <el-segmented v-model="sampleRate" :options="sampleRates" :disabled="disabled" block aria-label="音频采样率" />
         </div>
         <div class="settingField">
-          <span class="fieldLabel">Định dạng đầu ra</span>
-          <el-segmented v-model="format" :options="formats" :disabled="disabled" block aria-label="Định dạng âm thanh đầu ra" />
+          <span class="fieldLabel">输出格式</span>
+          <el-segmented v-model="format" :options="formats" :disabled="disabled" block aria-label="音频输出格式" />
         </div>
       </div>
       <div class="settingsSummary">{{ languageLabel }} · {{ sampleRate / 1000 }} kHz · {{ formatLabels[format] ?? format }}</div>

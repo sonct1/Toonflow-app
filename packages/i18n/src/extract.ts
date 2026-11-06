@@ -22,9 +22,14 @@ async function scan(directory: string) {
     if (!/\.(ts|vue)$/.test(item.name) || /(?:\.d\.ts|providerPrompt|systemPrompt)\./i.test(item.name) || /packages[\\/]ffmpeg[\\/]src[\\/]browser\.ts$/.test(path)) continue;
     // 工具自身的文案由工具维护，不纳入宿主字典。
     if (/apps[\\/]server[\\/]src[\\/](?:agent[\\/](?:tools[\\/](?!index\.ts$)|bridge[\\/]question\.ts$)|routes[\\/]browser[\\/])/.test(path)) continue;
+    const nodePackage = /packages[\\/](?:nodes|nodeShared|nodeScaffold)[\\/]/.test(path);
+    if (nodePackage && !item.name.endsWith(".vue") && !/^(?:audioSettings|useNode|showNodeError)\.ts$/.test(item.name)) continue;
     const source = await readFile(path, "utf8");
-    if (/(?:apps[\\/]web|packages[\\/](?:multiTenant[\\/](?:adminWeb|userWeb)|providerWeb))/.test(path)) {
+    if (nodePackage || /(?:apps[\\/]web|packages[\\/](?:multiTenant[\\/](?:adminWeb|userWeb)|providerWeb))/.test(path)) {
       for (const message of collectMessages(source, path)) add(message, path);
+    }
+    if (nodePackage && item.name === "index.vue") {
+      for (const match of source.matchAll(/\blabel: "([^"\n]+)"/g)) add(match[1]!, path);
     }
     const scripts = item.name.endsWith(".vue")
       ? (() => { const { descriptor } = parseSfc(source); return [descriptor.script?.content, descriptor.scriptSetup?.content].filter(Boolean) as string[]; })()
@@ -57,7 +62,7 @@ async function scan(directory: string) {
     }
   }
 }
-for (const path of ["apps/web/src", "apps/server/src", "apps/desktop/src", "apps/mobile/src", "packages/mcp/src", "packages/ffmpeg/src", "packages/multiTenant", "packages/providerWeb"]) await scan(resolve(root, path));
+for (const path of ["apps/web/src", "apps/server/src", "apps/desktop/src", "apps/mobile/src", "packages/mcp/src", "packages/ffmpeg/src", "packages/multiTenant", "packages/providerWeb", "packages/nodes", "packages/nodeShared/src", "packages/nodeScaffold/src"]) await scan(resolve(root, path));
 const messages = Object.fromEntries([...catalog].sort(([left], [right]) => left.localeCompare(right, "zh-CN")).map(([message]) => [message, message]));
 await mkdir(resolve(import.meta.dirname, "locales"), { recursive: true });
 await writeAtomic(resolve(import.meta.dirname, "locales/zhCn.json"), JSON.stringify(messages, null, 2) + "\n");

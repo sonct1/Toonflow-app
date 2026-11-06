@@ -14,7 +14,8 @@
     "element-plus": "^2.14.5"
   },
   "dependencies": {
-    "@tabler/icons-vue": "^3.46.0"
+    "@tabler/icons-vue": "^3.46.0",
+    "@toonflow/i18n": "workspace:*"
   },
   "devDependencies": {
     "@toonflow/node-shared": "workspace:*",

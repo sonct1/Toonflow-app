@@ -52,7 +52,7 @@ export default defineConfig(({ command }) => ({
         return { code: `${code}\n//# sourceMappingURL=${basename(id.split("?")[0])}.map`, map: { mappings: "" } };
       },
     },
-    i18nPlugin(),
+    i18nPlugin({ nodes: true }),
     vue(),
     components({
       globsExclude: ["src/components/settings/panels/**/*Dialog.vue"],

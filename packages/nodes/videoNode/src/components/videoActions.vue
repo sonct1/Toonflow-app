@@ -13,7 +13,7 @@
     :style="{ maxWidth: 'calc(100vw - 24px)', maxHeight: 'calc(94vh - 12px)', overflow: 'auto' }">
     <div class="videoActionPanel nodrag nopan nowheel" @pointerdown.stop @mousedown.stop @dblclick.stop @keydown.stop>
       <template v-if="action === 'trim'">
-        <p v-if="preparingPreview || previewError" class="actionHint" role="status">{{ preparingPreview ? 'Đang chuẩn bị bản xem trước…' : previewError }}</p>
+        <p v-if="preparingPreview || previewError" class="actionHint" role="status">{{ preparingPreview ? '正在生成兼容预览…' : previewError }}</p>
         <video ref="preview" class="clipPreview" :src="playbackSrc" controls playsinline preload="auto" aria-label="截取片段预览" @loadeddata="readDuration" @timeupdate="readTime" @play="playSelection" @error="duration = 0; handleError($event)" />
         <div class="clipTimeline" :class="{ unavailable: processing || !duration }">
           <div class="timelineHeader">
@@ -44,7 +44,7 @@
                 :aria-valuemin="edge === 'start' ? 0 : start + minimumLength"
                 :aria-valuemax="edge === 'start' ? Math.max(0, end - minimumLength) : clipLimit"
                 :aria-valuenow="edge === 'start' ? start : end"
-                :aria-valuetext="Number.isFinite(edge === 'start' ? start : end) ? `${(edge === 'start' ? start : end).toFixed(2)} 秒` : 'Chưa đặt'"
+                :aria-valuetext="Number.isFinite(edge === 'start' ? start : end) ? `${(edge === 'start' ? start : end).toFixed(2)} 秒` : '未设置'"
                 :disabled="processing || disabled || !duration"
                 @pointerdown.stop.prevent="beginDrag($event, edge)"
                 @pointermove.stop.prevent="moveDrag"
@@ -59,8 +59,8 @@
           </div>
         </div>
         <div class="clipTimes">
-          <label><span>Thời điểm bắt đầu</span><input v-model.number="start" class="timeInput" type="number" min="0" :max="clipLimit" step="0.01" :disabled="processing || !duration" aria-label="片段开始时间" @input="seekPreview(($event.target as HTMLInputElement).valueAsNumber)" /><span>giây</span></label>
-          <label><span>Thời điểm kết thúc</span><input v-model.number="end" class="timeInput" type="number" min="0" :max="clipLimit" step="0.01" :disabled="processing || !duration" aria-label="片段结束时间" @input="seekPreview(($event.target as HTMLInputElement).valueAsNumber)" /><span>giây</span></label>
+          <label><span>开始时间</span><input v-model.number="start" class="timeInput" type="number" min="0" :max="clipLimit" step="0.01" :disabled="processing || !duration" aria-label="片段开始时间" @input="seekPreview(($event.target as HTMLInputElement).valueAsNumber)" /><span>秒</span></label>
+          <label><span>结束时间</span><input v-model.number="end" class="timeInput" type="number" min="0" :max="clipLimit" step="0.01" :disabled="processing || !duration" aria-label="片段结束时间" @input="seekPreview(($event.target as HTMLInputElement).valueAsNumber)" /><span>秒</span></label>
           <span class="selectionDuration">时长 {{ validRange ? (end - start).toFixed(2) : '—' }} 秒</span>
         </div>
         <p class="actionHint">{{ validRange ? '截取后生成新视频节点，原视频会保留。' : '请选择有效的起止时间。' }}</p>
@@ -71,7 +71,7 @@
         <span>{{ cancelling ? '正在取消并清理文件…' : '正在处理视频…' }}</span>
       </div>
       <div class="panelActions">
-        <el-button :disabled="cancelling" @click="processing ? cancel() : visible = false">{{ processing ? 'Hủy xử lý' : 'Hủy' }}</el-button>
+        <el-button :disabled="cancelling" @click="processing ? cancel() : visible = false">{{ processing ? '取消处理' : '取消' }}</el-button>
         <el-button type="primary" :loading="processing" :disabled="disabled || !file || (action === 'trim' && !validRange)" @click="run">{{ actionLabels[action] }}</el-button>
       </div>
     </div>

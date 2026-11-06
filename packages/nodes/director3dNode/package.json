@@ -19,7 +19,8 @@
     "html2canvas-pro": "2.0.2",
     "three": "0.184.0",
     "threejson": "0.1.0-alpha.9",
-    "vue-draggable-plus": "^0.6.1"
+    "vue-draggable-plus": "^0.6.1",
+    "@toonflow/i18n": "workspace:*"
   },
   "devDependencies": {
     "@toonflow/node-shared": "workspace:*",

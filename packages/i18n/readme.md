@@ -14,7 +14,7 @@ Web 设置和首次引导复用 `languageSelect.vue`：设置页直接展示语�
 
 Element Plus 使用 `src/elementPlus/` 中的 21 份完整语言 JSON，通过 `@toonflow/i18n/elementPlus` 接入全局 ConfigProvider；分页、日期、上传、筛选及无障碍提示随语言即时更新，不再因官方语言包缺失而回退英语。日期格式和星期名称使用 Web 已注册的 Day.js 语言包；菲律宾语映射为 `tl-ph`，Gurmukhi 旁遮普语映射为 `pa-in`。TDesign 缺少的语言仍使用英语基底，聊天控件由应用字典补齐；Zod 的 `fil/te/mr/pa` 通用校验提示仍回退英语。
 
-Web 静态文本和明确的展示属性由 `@toonflow/i18n/vite` 在 Vue 编译前转换，业务源码继续写中文。转换仅作用于 `apps/web/src`；编译器只处理已知显示位置，不遍历 DOM，不调用在线翻译，不关闭 Vue 静态优化，也不通过重新挂载页面切换语言。
+Web 静态文本和明确的展示属性由 `@toonflow/i18n/vite` 在 Vue 编译前转换，业务源码继续写中文。转换作用于 `apps/web/src`、`packages/providerWeb` 和显式启用的内置 Node 界面；编译器只处理已知显示位置，不遍历 DOM，不调用在线翻译，不关闭 Vue 静态优化，也不通过重新挂载页面切换语言。
 
 动态文案可以使用原生 JavaScript 标签模板，无需 Babel 宏：
 
@@ -38,7 +38,7 @@ const countLabel = computed(() => t`已选择 ${selectedCount.value} 个节点`)
 
 语言来源按每个请求的 `Accept-Language`（含 q 权重）隔离；无支持的请求语言时使用保存的应用语言或系统语言。Zod 使用一次注册、按请求读取的语言分派器。SSE、MCP 和 FFmpeg 仅处理已识别的系统错误，模型正文、工具成功结果、供应商未知错误、用户内容和日志详情保持原样。
 
-供应商、tools、nodes 子包和节点脚手架不接入多语言，也不参与文案抽取。插件名称和插件自身文案使用原值；Web 中的插件管理菜单、安装操作和配置校验提示仍属于应用界面。节点构建和宿主之间不提供语言运行时接口。
+内置 Node、nodeShared 和 nodeScaffold 的 Vue 界面通过 `i18nPlugin({ nodes: true })` 接入相同的展示边界转换；音频选项、节点显示名和错误出口显式纳入。UMD 将 `@toonflow/i18n/vue` external 到 `toonflowNodeHost.i18n`，与宿主共用响应式语言，不重复打包字典。菜单显示名在渲染时翻译，用户保存的节点名称、输入、输出和 prompt 保持原样。XSender 的占位符通过配置更新切换语言，不重建编辑器。供应商、Tool 和第三方插件仍不自动转换。
 
 ## 更新文案
 
@@ -59,3 +59,7 @@ Element Plus JSON 独立于应用文案抽取维护，基于 2.14.5 的完整 14
 字典随应用打包，运行时不依赖翻译服务。当前 20 份译文字典已完成 AI 辅助的全量逐条语义校对，并对术语、否定条件、操作对象、数字和模板参数进行复核；这不等同于各语言母语人员的出版级审校。供应商、tools、nodes 子包、第三方网站与安装器不在本次翻译范围。
 
 本次验证过程见 [回归记录](./regression.md)。
+
+## Node language integration
+
+New node UI catalog entries use machine-assisted translations. Urdu (152 entries), Tamil (338 entries), and Persian (546 entries) currently contain explicit English fallback entries after the translation service rate limit; these are not native-language translations. Two empty machine translations (Thai annotation and Urdu panorama stretching) also use English fallback. Review terminology in context before treating them as publication-quality translations. Existing saved node names and canvas names are user data and are not migrated when switching languages. Built-in plugin files already installed in a data volume need an explicit backed-up update after rebuilding; rebuilding the image alone does not replace installed plugins.

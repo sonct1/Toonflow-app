@@ -465,6 +465,7 @@
         "@toonflow/asr": "workspace:*",
         "@toonflow/ffmpeg": "workspace:*",
         "@toonflow/file": "workspace:*",
+        "@toonflow/i18n": "workspace:*",
         "@vitejs/plugin-vue": "^6.0.8",
         "eventsource-parser": "3.1.1",
         "vite": "^8.2.2",
@@ -488,6 +489,7 @@
       "dependencies": {
         "@form-create/element-ui": "^3",
         "@tabler/icons-vue": "^3.46.0",
+        "@toonflow/i18n": "workspace:*",
         "@toonflow/model-icons": "workspace:*",
         "vue-draggable-plus": "^0.6.1",
         "x-sender": "1.4.6",
@@ -509,6 +511,7 @@
       "version": "2.0.0",
       "dependencies": {
         "@tabler/icons-vue": "^3.46.0",
+        "@toonflow/i18n": "workspace:*",
       },
       "devDependencies": {
         "@toonflow/node-audio": "workspace:*",
@@ -529,6 +532,7 @@
       "version": "2.0.0",
       "dependencies": {
         "@tabler/icons-vue": "^3.46.0",
+        "@toonflow/i18n": "workspace:*",
       },
       "devDependencies": {
         "@toonflow/ffmpeg": "workspace:*",
@@ -549,6 +553,7 @@
       "version": "2.0.0",
       "dependencies": {
         "@tabler/icons-vue": "^3.46.0",
+        "@toonflow/i18n": "workspace:*",
         "@tweenjs/tween.js": "25.0.0",
         "html2canvas-pro": "2.0.2",
         "three": "0.184.0",
@@ -574,6 +579,7 @@
       "version": "1.3.0",
       "dependencies": {
         "@tabler/icons-vue": "^3.46.0",
+        "@toonflow/i18n": "workspace:*",
       },
       "devDependencies": {
         "@toonflow/node-shared": "workspace:*",
@@ -595,6 +601,7 @@
       "version": "2.0.0",
       "dependencies": {
         "@tabler/icons-vue": "^3.46.0",
+        "@toonflow/i18n": "workspace:*",
       },
       "devDependencies": {
         "@toonflow/node-image": "workspace:*",
@@ -615,6 +622,7 @@
       "version": "2.0.0",
       "dependencies": {
         "@tabler/icons-vue": "^3.46.0",
+        "@toonflow/i18n": "workspace:*",
         "three": "0.184.0",
       },
       "devDependencies": {
@@ -636,6 +644,7 @@
       "version": "2.0.0",
       "dependencies": {
         "@tabler/icons-vue": "^3.46.0",
+        "@toonflow/i18n": "workspace:*",
       },
       "devDependencies": {
         "@toonflow/node-shared": "workspace:*",
@@ -670,6 +679,7 @@
       "version": "2.0.0",
       "dependencies": {
         "@tabler/icons-vue": "^3.46.0",
+        "@toonflow/i18n": "workspace:*",
       },
       "devDependencies": {
         "@toonflow/node-shared": "workspace:*",
@@ -690,6 +700,7 @@
       "version": "2.0.0",
       "dependencies": {
         "@tabler/icons-vue": "^3.46.0",
+        "@toonflow/i18n": "workspace:*",
       },
       "devDependencies": {
         "@toonflow/ffmpeg": "workspace:*",

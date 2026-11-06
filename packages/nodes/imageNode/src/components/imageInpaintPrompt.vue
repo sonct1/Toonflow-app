@@ -3,7 +3,7 @@
     <el-card v-show="!!target" class="inpaintPrompt" shadow="never" :bodyStyle="{ padding: '14px 16px 12px' }">
       <promptInput v-model="promptModel" v-model:text="prompt" :references="[]" expandable />
       <div class="promptFooter">
-        <el-button type="primary" :icon="IconCheck" :loading="creating" :disabled="disabled || !prompt.trim()" @click="confirmInpaint">Xác nhận</el-button>
+        <el-button type="primary" :icon="IconCheck" :loading="creating" :disabled="disabled || !prompt.trim()" @click="confirmInpaint">确认</el-button>
       </div>
     </el-card>
   </teleport>

@@ -10,22 +10,22 @@
     :fullscreenVisible="false"
     style="width: 360px">
     <template #topActions>
-      <el-button :icon="IconTextRecognition" :loading="transcribing" :disabled="busy || !outputFile" text title="Chuyển âm thanh thành văn bản" aria-label="Chuyển âm thanh thành văn bản" @click.stop="transcribe">Chuyển thành văn bản</el-button>
-      <el-button v-if="transcribing" :icon="IconPlayerStop" text title="Hủy chuyển thành văn bản" aria-label="Hủy chuyển thành văn bản" @click.stop="cancelTranscription">Hủy</el-button>
-      <el-button :icon="IconScissors" :disabled="busy || !previewUrl" text title="Cắt âm thanh" aria-label="Cắt âm thanh" @click.stop="actions?.open('clip')">Cắt đoạn</el-button>
-      <el-button :icon="IconGauge" :disabled="busy || !previewUrl" text title="Đổi tốc độ âm thanh" aria-label="Đổi tốc độ âm thanh" @click.stop="actions?.open('speed')">Đổi tốc độ</el-button>
-      <el-button :icon="IconTransfer" :loading="uploading" :disabled="busy" text title="Thay âm thanh" aria-label="Thay âm thanh" @click.stop="fileInput?.click()">Thay âm thanh</el-button>
-      <input ref="fileInput" type="file" accept="audio/*" hidden aria-label="Chọn âm thanh thay thế" :disabled="busy" @change="replaceOutput" />
+      <el-button :icon="IconTextRecognition" :loading="transcribing" :disabled="busy || !outputFile" text title="音频转文本" aria-label="音频转文本" @click.stop="transcribe">转文本</el-button>
+      <el-button v-if="transcribing" :icon="IconPlayerStop" text title="取消转文本" aria-label="取消转文本" @click.stop="cancelTranscription">取消</el-button>
+      <el-button :icon="IconScissors" :disabled="busy || !previewUrl" text title="截取音频" aria-label="截取音频" @click.stop="actions?.open('clip')">截取</el-button>
+      <el-button :icon="IconGauge" :disabled="busy || !previewUrl" text title="音频变速" aria-label="音频变速" @click.stop="actions?.open('speed')">变速</el-button>
+      <el-button :icon="IconTransfer" :loading="uploading" :disabled="busy" text title="替换音频" aria-label="替换音频" @click.stop="fileInput?.click()">替换音频</el-button>
+      <input ref="fileInput" type="file" accept="audio/*" hidden aria-label="选择替换音频" :disabled="busy" @change="replaceOutput" />
     </template>
     <div v-loading="generating || uploading" class="audioContent nopan" :aria-busy="generating || uploading">
       <audioPlayer v-if="previewUrl" ref="player" v-model:pcmOptions="pcmOptions" class="audioPreview" :src="previewUrl" :mimeType="outputFile?.mimeType" @loadedmetadata="updateNodeInternals" />
-      <div v-else class="audioEmpty" role="img" aria-label="Chưa có âm thanh được tạo"><icon-music-bolt :size="48" stroke="1.25" aria-hidden="true" /></div>
+      <div v-else class="audioEmpty" role="img" aria-label="暂无生成音频"><icon-music-bolt :size="48" stroke="1.25" aria-hidden="true" /></div>
     </div>
     <template #bottom>
       <div v-if="actions?.mode === 'speed'" ref="speedTarget" />
       <el-card v-else class="promptCard" shadow="never" :bodyStyle="{ padding: '14px 16px 12px' }">
         <referenceItem v-if="refList.length" v-model="refList" @preview="setReferencePreview" @remove="removeReference" />
-        <promptInput v-model="data.promptModel" v-model:text="data.prompt" :references="referenceMentions" :materials="materialMentions" :selectMaterial="selectMaterialReference" :selectAsset="selectAssetReference" placeholder="Mô tả âm thanh mong muốn hoặc nhập văn bản cần đọc" expandable />
+        <promptInput v-model="data.promptModel" v-model:text="data.prompt" :references="referenceMentions" :materials="materialMentions" :selectMaterial="selectMaterialReference" :selectAsset="selectAssetReference" placeholder="描述您想要的音频效果或输入待朗读文本" expandable />
         <div class="promptFooter">
           <el-select
             :modelValue="selectedModel ? data.model : ''"
@@ -33,12 +33,12 @@
             filterable
             :loading="modelsLoading"
             :disabled="busy"
-            placeholder="Chọn mô hình"
-            aria-label="Mô hình tạo âm thanh"
-            noDataText="Hãy thêm mô hình tạo âm thanh trong Cài đặt"
+            placeholder="选择模型"
+            aria-label="音频生成模型"
+            noDataText="请先在设置中添加音频模型"
             placement="top-start"
             @update:modelValue="data.model = $event"
-            @visible-change="visible => visible && loadModels().catch(error => showNodeError(error, 'Không thể tải mô hình'))">
+            @visible-change="visible => visible && loadModels().catch(error => showNodeError(error, '模型读取失败'))">
             <template v-if="!selectedModel" #prefix><icon-music-bolt :size="17" /></template>
             <template #label="{ label }"><modelLabel :label="label" :providerId="selectedModel?.providerId" :modelId="selectedModel?.modelId" /></template>
             <el-option-group v-for="provider in modelGroups" :key="provider.id" :label="provider.label">
@@ -50,14 +50,14 @@
           <generationSettings v-model:language="data.language" v-model:sampleRate="data.sampleRate" v-model:format="data.format" v-model:other="data.other" :model="selectedModel" :disabled="busy || !selectedModel" />
           <div class="generationActions">
             <mediaPrice v-if="generationInput" :input="{ ...generationInput, mediaType: 'audio' }" :supported="selectedModel?.supportsPrice === true" />
-            <el-button v-if="pendingRecovery" class="sendButton" :icon="IconPlayerStop" :loading="cancelling" :disabled="deleting || uploading || transcribing || actions?.processing" title="Hủy tác vụ" aria-label="Hủy tác vụ" @click="generationState.cancel().catch(error => showNodeError(error, 'Không thể dừng tạo'))" />
+            <el-button v-if="pendingRecovery" class="sendButton" :icon="IconPlayerStop" :loading="cancelling" :disabled="deleting || uploading || transcribing || actions?.processing" title="放弃任务" aria-label="放弃任务" @click="generationState.cancel().catch(error => showNodeError(error, '停止生成失败'))" />
             <el-button
               class="sendButton"
               :icon="generating ? IconPlayerStop : IconArrowUp"
               :disabled="cancelling || deleting || uploading || transcribing || actions?.processing || (!generating && !pendingRecovery && (!generationPrompt || !selectedModel))"
-              :title="generating ? 'Dừng tạo' : pendingRecovery ? 'Kiểm tra lại tác vụ' : 'Tạo âm thanh'"
-              :aria-label="generating ? 'Dừng tạo' : pendingRecovery ? 'Kiểm tra lại tác vụ' : 'Tạo âm thanh'"
-              @click="generating ? generationState.cancel().catch(error => showNodeError(error, 'Không thể dừng tạo')) : startGeneration().catch(error => showNodeError(error, 'Tạo âm thanh thất bại'))" />
+              :title="generating ? '停止生成' : pendingRecovery ? '复查任务' : '生成音频'"
+              :aria-label="generating ? '停止生成' : pendingRecovery ? '复查任务' : '生成音频'"
+              @click="generating ? generationState.cancel().catch(error => showNodeError(error, '停止生成失败')) : startGeneration().catch(error => showNodeError(error, '音频生成失败'))" />
           </div>
         </div>
       </el-card>
@@ -92,12 +92,12 @@ defineOptions({
   inheritAttrs: false,
   icon: IconMusicBolt,
   handles: [
-    { id: "in", type: "target", dataType: ["IMAGE", "AUDIO", "STRING"], label: "Tối đa một ảnh hoặc âm thanh; không giới hạn văn bản" },
-    { id: "audio", type: "source", dataType: "AUDIO", label: "Âm thanh đầu ra" },
+    { id: "in", type: "target", dataType: ["IMAGE", "AUDIO", "STRING"], label: "图片或音频限1个，文本不限" },
+    { id: "audio", type: "source", dataType: "AUDIO", label: "音频输出" },
   ] satisfies NodeHandle[],
 });
 const vLoading = ElLoading.directive;
-const { id, node, nodeProps, nodeEvent, outputs, files, ai, updateNodeInternals } = useNode({ label: "Tạo âm thanh", onModelsChanged: () => void refreshProviderModels() });
+const { id, node, nodeProps, nodeEvent, outputs, files, ai, updateNodeInternals } = useNode({ label: "音频生成", onModelsChanged: () => void refreshProviderModels() });
 type PromptModel = NonNullable<InstanceType<typeof promptInput>["$props"]["modelValue"]>;
 const data = computed(() => node.data as { prompt: string; promptModel: PromptModel; model: string; language: string; sampleRate: number; format: string; other: Record<string, unknown> });
 data.value.prompt ??= "";

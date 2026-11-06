@@ -8,52 +8,52 @@
     :style="{ width: previewUrl && videoWidth ? `${videoWidth + 18}px` : undefined }"
     @fullscreen="player?.enterFullscreen()">
     <template #topActions>
-      <el-button :icon="IconMusic" text :disabled="!outputFile || uploading || exporting || actions?.processing" @click.stop="actions?.open('extractAudio')">Trích xuất âm thanh</el-button>
-      <el-button :icon="IconLayersSubtract" text :disabled="!outputFile || uploading || exporting || actions?.processing" @click.stop="actions?.open('separate')">Tách âm thanh và video</el-button>
-      <el-button :icon="IconScissors" text :disabled="!outputFile || uploading || exporting || actions?.processing" @click.stop="actions?.open('trim')">Cắt đoạn video</el-button>
-      <el-button :icon="IconMovie" text :loading="actions?.creatingAnalysis" :disabled="!outputFile || uploading || exporting || actions?.processing || actions?.creatingAnalysis" @click.stop="actions?.createFrameAnalysis()">Phân tích từng khung hình</el-button>
+      <el-button :icon="IconMusic" text :disabled="!outputFile || uploading || exporting || actions?.processing" @click.stop="actions?.open('extractAudio')">提取音轨</el-button>
+      <el-button :icon="IconLayersSubtract" text :disabled="!outputFile || uploading || exporting || actions?.processing" @click.stop="actions?.open('separate')">分离音视频</el-button>
+      <el-button :icon="IconScissors" text :disabled="!outputFile || uploading || exporting || actions?.processing" @click.stop="actions?.open('trim')">截取片段</el-button>
+      <el-button :icon="IconMovie" text :loading="actions?.creatingAnalysis" :disabled="!outputFile || uploading || exporting || actions?.processing || actions?.creatingAnalysis" @click.stop="actions?.createFrameAnalysis()">逐帧拉片</el-button>
       <el-button
         :icon="IconTransfer"
         :loading="uploading"
         :disabled="exporting"
         text
-        title="Thay video"
-        aria-label="Thay video"
-        @click.stop="fileInput?.click()">Thay video</el-button>
+        title="替换视频"
+        aria-label="替换视频"
+        @click.stop="fileInput?.click()">替换视频</el-button>
     </template>
     <template #topRightActions>
       <el-dropdown trigger="click" placement="bottom-end" :disabled="!player?.ready || player?.capturing || uploading || exporting" @command="player?.captureFrame($event)">
-        <el-button :icon="IconPhotoScan" :loading="player?.capturing" :disabled="!player?.ready || player?.capturing || uploading || exporting" text title="Chụp khung hình video" aria-label="Chụp khung hình video" />
+        <el-button :icon="IconPhotoScan" :loading="player?.capturing" :disabled="!player?.ready || player?.capturing || uploading || exporting" text title="截取视频帧" aria-label="截取视频帧" />
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item command="current" :icon="IconPhotoScan">Chụp khung hình hiện tại</el-dropdown-item>
-            <el-dropdown-item command="first" :icon="IconPlayerSkipBack">Chụp khung hình đầu</el-dropdown-item>
-            <el-dropdown-item command="last" :icon="IconPlayerSkipForward">Chụp khung hình cuối</el-dropdown-item>
+            <el-dropdown-item command="current" :icon="IconPhotoScan">截取当前帧</el-dropdown-item>
+            <el-dropdown-item command="first" :icon="IconPlayerSkipBack">截取首帧</el-dropdown-item>
+            <el-dropdown-item command="last" :icon="IconPlayerSkipForward">截取尾帧</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
     </template>
     <div class="videoContent nopan">
-      <div v-if="exporting" class="exportLoading" role="status" aria-label="Đang xuất video">
+      <div v-if="exporting" class="exportLoading" role="status" aria-label="视频导出中">
         <el-progress type="circle" :percentage="exportProgress" :width="64" :strokeWidth="3" />
-        <span>Đang xuất video</span>
+        <span>正在导出视频</span>
       </div>
       <videoPlayer
         v-else-if="previewUrl"
         ref="player"
         :src="previewUrl"
         @loadedmetadata="resizeVideo" />
-      <input ref="fileInput" class="fileInput" type="file" accept="video/*" aria-label="Chọn video" :disabled="uploading || exporting" @change="uploadVideo" />
+      <input ref="fileInput" class="fileInput" type="file" accept="video/*" aria-label="选择视频" :disabled="uploading || exporting" @change="uploadVideo" />
       <el-button
         v-if="!exporting && !outputs.video"
         class="nodrag nopan"
         :icon="IconUpload"
         text
         :loading="uploading"
-        title="Tải video lên"
-        aria-label="Tải video lên"
+        title="上传视频"
+        aria-label="上传视频"
         @dblclick.stop
-        @click.stop="fileInput?.click()">Tải lên</el-button>
+        @click.stop="fileInput?.click()">上传</el-button>
     </div>
   </nodeSkeleton>
   <videoActions ref="actions" :file="outputFile" :src="previewUrl" :disabled="uploading || exporting" />
@@ -71,10 +71,10 @@ import { getMediaMimeType } from "@toonflow/node-shared/mediaTypes";
 defineOptions({
   inheritAttrs: false,
   icon: IconVideo,
-  handles: [{ id: "video", type: "source", dataType: "VIDEO", label: "Video đầu ra" }] satisfies NodeHandle[],
+  handles: [{ id: "video", type: "source", dataType: "VIDEO", label: "视频输出" }] satisfies NodeHandle[],
 });
 const { node, nodeProps, outputs, nodeEvent, files, updateNodeInternals } = useNode({
-  label: "Video",
+  label: "视频",
 });
 const fileInput = ref<HTMLInputElement>();
 const uploading = ref(false);

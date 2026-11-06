@@ -120,7 +120,7 @@
 
 <script setup lang="ts">
 import axios from "axios";
-import { translate } from "@toonflow/i18n/vue";
+import { locale, translate } from "@toonflow/i18n/vue";
 import { computed, onBeforeUnmount, onMounted, ref, watch, type Component } from "vue";
 import { ElMessage, type InputInstance } from "element-plus";
 import { IconBox, IconFolder, IconFolderOpen, IconFolderMinus, IconRestore, IconChevronRight, IconEdit, IconEye, IconEyeOff, IconPlus, IconDragDrop, IconFileText, IconPhoto, IconVideo, IconMusic, IconMusicBolt, IconCube3dSphere, IconPhotoAi, IconCameraAi } from "@tabler/icons-vue";
@@ -156,9 +156,9 @@ const loading = ref(true);
 const loadError = ref("");
 let loadRequest = 0;
 
-watch([() => generalSettings.value.nodeMenu, installedNodes], () => {
+watch([() => generalSettings.value.nodeMenu, installedNodes, locale], () => {
   const saved = normalizeNodeMenu(serializeNodeMenu(generalSettings.value.nodeMenu, installedTypes.value));
-  menuItems.value = resolveNodeMenu(saved, installedNodes.value);
+  menuItems.value = resolveNodeMenu(saved, installedNodes.value.map(node => ({ ...node, label: translate(node.label) })));
 }, { immediate: true });
 
 const menuEntries = computed(() => {
@@ -173,7 +173,7 @@ const menuEntries = computed(() => {
   return entries;
 });
 const editing = computed(() => menuEntries.value.find(entry => entry.item.id === editingId.value));
-const originalName = computed(() => installedNodes.value.find(node => node.type === editing.value?.item.type)?.label ?? "");
+const originalName = computed(() => translate(installedNodes.value.find(node => node.type === editing.value?.item.type)?.label ?? ""));
 const menuColumns = computed(() => {
   const columns: MenuColumn[] = [{ id: "", depth: 1, label: "添加节点", items: menuItems.value }];
   for (const id of openGroups.value) {

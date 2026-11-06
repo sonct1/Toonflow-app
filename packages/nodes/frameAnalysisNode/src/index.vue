@@ -8,59 +8,59 @@
     :style="{ width: `${nodeWidth}px` }">
     <template #top>
       <el-card class="mediaToolbar" shadow="never" :bodyStyle="{ padding: '6px', display: 'flex', alignItems: 'center' }">
-        <el-button :icon="IconTransfer" text :disabled="busy || connected" @click="fileInput?.click()">Thay video</el-button>
-        <el-button :icon="IconMaximize" text :disabled="!player?.ready" @click="player?.enterFullscreen()">Toàn màn hình</el-button>
-        <el-button :icon="IconFileText" text :disabled="!lastResultMatches" @click="openReport">Xem kết quả</el-button>
+        <el-button :icon="IconTransfer" text :disabled="busy || connected" @click="fileInput?.click()">替换视频</el-button>
+        <el-button :icon="IconMaximize" text :disabled="!player?.ready" @click="player?.enterFullscreen()">全屏</el-button>
+        <el-button :icon="IconFileText" text :disabled="!lastResultMatches" @click="openReport">查看结果</el-button>
       </el-card>
     </template>
     <div class="analysisContent">
       <div class="videoArea nodrag nopan nowheel" @pointerdown.stop @dblclick.stop>
-        <videoPlayer v-if="previewUrl" ref="player" :src="previewUrl" label="Video cần phân tích" @loadedmetadata="readMetadata" />
+        <videoPlayer v-if="previewUrl" ref="player" :src="previewUrl" label="拉片视频" @loadedmetadata="readMetadata" />
         <el-button v-else class="uploadButton" text :loading="uploading" :disabled="busy || connected" @click="fileInput?.click()">
           <icon-upload :size="40" stroke="1.5" aria-hidden="true" />
-          <span>{{ connected ? 'Đang chờ video đầu vào' : 'Chọn video' }}</span>
+          <span>{{ connected ? '等待上游视频' : '选择视频' }}</span>
         </el-button>
-        <input ref="fileInput" class="fileInput" type="file" accept="video/*,.mkv,.mov,.avi,.m4v,.ts" aria-label="Chọn video" :disabled="busy || connected" @change="uploadVideo" />
+        <input ref="fileInput" class="fileInput" type="file" accept="video/*,.mkv,.mov,.avi,.m4v,.ts" aria-label="选择视频" :disabled="busy || connected" @change="uploadVideo" />
       </div>
       <div v-if="metadata.width" class="sourceInfo">
         <span>{{ formatDuration(metadata.duration) }}</span>
         <span>{{ metadata.width }} × {{ metadata.height }}</span>
       </div>
-      <p v-if="previewFailed" class="statusText">Không thể xem trước định dạng này, vẫn có thể thử xử lý cục bộ</p>
+      <p v-if="previewFailed" class="statusText">当前格式无法预览，仍可尝试本地处理</p>
       <div v-if="processing" class="progressArea" role="status" aria-live="polite">
         <el-progress :percentage="progress" :strokeWidth="4" :showText="false" />
-        <p class="statusText">{{ cancelling ? 'Đang hủy…' : progressLabel }} · {{ progress }}%</p>
+        <p class="statusText">{{ cancelling ? '正在取消…' : progressLabel }} · {{ progress }}%</p>
       </div>
       <div v-else-if="lastResultMatches" class="resultSummary">
-        <span>{{ lastResult!.scenes.length }} cảnh<span v-if="lastResult!.audio"> · 原音轨</span></span>
+        <span>{{ lastResult!.scenes.length }} 个镜头<span v-if="lastResult!.audio"> · 原音轨</span></span>
       </div>
       <p v-if="errorMessage" class="errorMessage nodrag nopan nowheel" role="alert">{{ errorMessage }}</p>
-      <p v-else-if="lastResultMatches && lastResult?.ai?.overviewError" class="warningMessage">Đã lưu phân tích từng cảnh, chưa tổng hợp toàn bộ: {{ lastResult.ai.overviewError }}</p>
+      <p v-else-if="lastResultMatches && lastResult?.ai?.overviewError" class="warningMessage">逐镜头分析已保存，整段归纳未完成：{{ lastResult.ai.overviewError }}</p>
       <p v-else-if="lastResultMatches && lastResult?.warning" class="warningMessage">{{ lastResult.warning }}</p>
     </div>
     <template #bottom>
       <el-card class="promptCard nodrag nopan nowheel" shadow="never" :bodyStyle="{ padding: '14px 16px 12px' }" @pointerdown.stop @dblclick.stop>
         <div class="promptHeader">
           <div class="dimensionOptions">
-            <el-checkbox v-model="settings.frames" :disabled="busy" title="Trích một khung hình chính cho mỗi cảnh"><icon-photo :size="15" />Phân cảnh</el-checkbox>
-            <el-checkbox v-model="settings.clips" :disabled="busy" title="Cắt video theo ranh giới cảnh"><icon-movie :size="15" />Đoạn video</el-checkbox>
-            <el-checkbox v-model="settings.audio" :disabled="busy" title="Giữ toàn bộ âm thanh gốc gồm giọng nói, nhạc và âm thanh môi trường"><icon-wave-sine :size="15" />Âm thanh gốc</el-checkbox>
+            <el-checkbox v-model="settings.frames" :disabled="busy" title="每个镜头提取一张关键帧"><icon-photo :size="15" />分镜</el-checkbox>
+            <el-checkbox v-model="settings.clips" :disabled="busy" title="按镜头边界切割视频片段"><icon-movie :size="15" />动态</el-checkbox>
+            <el-checkbox v-model="settings.audio" :disabled="busy" title="保留完整原声，包含人声、音乐和环境声"><icon-wave-sine :size="15" />原音轨</el-checkbox>
           </div>
           <el-popover placement="top-end" :width="300" trigger="click">
-            <template #reference><el-button :icon="IconAdjustmentsHorizontal" text size="small">Cài đặt phát hiện cảnh</el-button></template>
+            <template #reference><el-button :icon="IconAdjustmentsHorizontal" text size="small">检测设置</el-button></template>
             <div class="settingsFields nodrag nopan nowheel" @pointerdown.stop @dblclick.stop>
-              <label class="settingRow"><span>Thuật toán phát hiện</span><el-select v-model="settings.method" :disabled="busy" aria-label="Thuật toán phát hiện"><el-option value="adaptive" label="Thay đổi thích ứng" /><el-option value="content" label="Ngưỡng thay đổi cố định" /></el-select></label>
-              <label class="settingRow"><span>Ngưỡng chuyển cảnh</span><el-input-number v-model="settings.threshold" :min="0.1" :max="255" :step="settings.method === 'adaptive' ? 0.1 : 1" controlsPosition="right" :disabled="busy" aria-label="切镜阈值" /></label>
-              <label class="settingRow"><span>Cảnh ngắn nhất (giây)</span><el-input-number v-model="settings.minSceneSeconds" :min="0" :max="60" :step="0.1" controlsPosition="right" :disabled="busy" aria-label="Thời lượng cảnh ngắn nhất" /></label>
-              <p class="settingHint">Ngưỡng càng thấp càng nhạy. Phân cảnh trích khung hình chính, đoạn video xuất từng cảnh.</p>
+              <label class="settingRow"><span>检测算法</span><el-select v-model="settings.method" :disabled="busy" aria-label="检测算法"><el-option value="adaptive" label="自适应变化" /><el-option value="content" label="固定变化阈值" /></el-select></label>
+              <label class="settingRow"><span>切镜阈值</span><el-input-number v-model="settings.threshold" :min="0.1" :max="255" :step="settings.method === 'adaptive' ? 0.1 : 1" controlsPosition="right" :disabled="busy" aria-label="切镜阈值" /></label>
+              <label class="settingRow"><span>最短镜头（秒）</span><el-input-number v-model="settings.minSceneSeconds" :min="0" :max="60" :step="0.1" controlsPosition="right" :disabled="busy" aria-label="最短镜头秒数" /></label>
+              <p class="settingHint">阈值越低，检测越敏感。分镜提取关键帧，动态导出视频片段。</p>
             </div>
           </el-popover>
         </div>
         <template v-if="settings.aiEnabled">
-          <promptInput v-model="focusModel" v-model:text="settings.focus" :references="[]" placeholder="Nhập trọng tâm phân tích, ví dụ: cách kể chuyện hoặc thay đổi nhịp điệu…" />
-          <div class="promptHint"><span>Phân tích từng cảnh rồi tổng hợp cách kể chuyện, nhịp điệu và dựng phim · Cần mô hình hiểu hình ảnh</span><span :class="{ overLimit: settings.focus.length > 2000 }">{{ settings.focus.length }}/2000</span></div>
+          <promptInput v-model="focusModel" v-model:text="settings.focus" :references="[]" placeholder="填写分析重点，例如：镜头如何推动叙事、节奏如何变化…" />
+          <div class="promptHint"><span>逐镜头观察，再归纳叙事、节奏与剪辑 · 模型需支持图片理解</span><span :class="{ overLimit: settings.focus.length > 2000 }">{{ settings.focus.length }}/2000</span></div>
         </template>
-        <p v-else class="localHint">Phát hiện cảnh, trích khung hình và âm thanh gốc cục bộ, đưa kết quả lên bảng vẽ.</p>
+        <p v-else class="localHint">本地检测分镜、提取关键帧与原音轨，结果直接生成到画布。</p>
         <div class="promptFooter">
           <el-select v-if="settings.aiEnabled" :modelValue="selectedModel ? settings.aiModel : ''" class="modelSelect" :loading="modelsLoading" :disabled="busy" filterable placeholder="选择语言模型" aria-label="拉片语言模型" noDataText="请先在设置中添加模型" placement="top-start" @update:modelValue="settings.aiModel = $event" @visible-change="visible => visible && loadModels()">
             <template v-if="!selectedModel" #prefix><icon-sparkles :size="17" /></template>
@@ -71,13 +71,13 @@
               </el-option>
             </el-option-group>
           </el-select>
-          <span v-else class="localLabel"><icon-scissors :size="17" />Phân tích cục bộ</span>
+          <span v-else class="localLabel"><icon-scissors :size="17" />本地分析</span>
           <div class="promptActions">
-            <el-switch v-model="settings.aiEnabled" :disabled="busy" activeText="Hỗ trợ AI" aria-label="Phân tích video bằng AI" />
-            <el-button v-if="processing" :icon="IconPlayerStop" :disabled="cancelling" @click="cancel">{{ cancelling ? 'Đang hủy' : 'Hủy' }}</el-button>
+            <el-switch v-model="settings.aiEnabled" :disabled="busy" activeText="AI 辅助" aria-label="AI 辅助拉片" />
+            <el-button v-if="processing" :icon="IconPlayerStop" :disabled="cancelling" @click="cancel">{{ cancelling ? '正在取消' : '取消' }}</el-button>
             <template v-else>
-              <el-button v-if="settings.aiEnabled && lastResultMatches" :icon="IconSparkles" text :disabled="busy || !selectedModel || settings.focus.length > 2000" @click="runAi">{{ retryOverview ? 'Thử tổng hợp lại' : lastResult?.ai ? 'Phân tích lại' : 'Phân tích bổ sung' }}</el-button>
-              <el-button class="sendButton" :icon="IconArrowUp" :disabled="busy || !source || !hasDimensions || (settings.aiEnabled && (!selectedModel || settings.focus.length > 2000))" @click="run">{{ lastResultMatches ? 'Phân tích video lại' : 'Bắt đầu phân tích' }}</el-button>
+              <el-button v-if="settings.aiEnabled && lastResultMatches" :icon="IconSparkles" text :disabled="busy || !selectedModel || settings.focus.length > 2000" @click="runAi">{{ retryOverview ? '重试归纳' : lastResult?.ai ? '重新分析' : '补充分析' }}</el-button>
+              <el-button class="sendButton" :icon="IconArrowUp" :disabled="busy || !source || !hasDimensions || (settings.aiEnabled && (!selectedModel || settings.focus.length > 2000))" @click="run">{{ lastResultMatches ? '重新拉片' : '开始拉片' }}</el-button>
             </template>
           </div>
         </div>
@@ -109,7 +109,7 @@ defineOptions({
   inheritAttrs: false,
   icon: IconMovie,
   handles: [
-    { id: "in", type: "target", dataType: "VIDEO", label: "Tư liệu video" },
+    { id: "in", type: "target", dataType: "VIDEO", label: "视频素材" },
   ] satisfies NodeHandle[],
 });
 
@@ -127,7 +127,7 @@ type AnalysisSettings = {
 type PromptModel = NonNullable<InstanceType<typeof promptInput>["$props"]["modelValue"]>;
 type AnalysisState = AnalysisSettings & { source?: NodeMediaValue; lastResult?: AnalysisResult; resultSource?: string };
 
-const { id, node, nodeProps, outputs, ai, nodeEvent, files, ffmpeg: loadFfmpeg, updateNodeInternals } = useNode({ label: "Phân tích từng khung hình", onModelsChanged: () => void loadModels() });
+const { id, node, nodeProps, outputs, ai, nodeEvent, files, ffmpeg: loadFfmpeg, updateNodeInternals } = useNode({ label: "逐帧拉片", onModelsChanged: () => void loadModels() });
 // ACT: 拉片结果由独立素材节点承载，本节点仅保留视频输入；迁移旧版遗留输出。
 outputs.value = {};
 node.data.outputs = outputs.value;

@@ -11,10 +11,10 @@
     :popperStyle="{ maxWidth: 'calc(100vw - 24px)', padding: '16px', borderRadius: '12px' }">
     <div class="gridSplitPanel nodrag nopan nowheel" @pointerdown.stop @mousedown.stop @dblclick.stop @keydown.stop @keydown.esc.prevent="visible = false; trigger?.focus()">
       <div class="panelHeader">
-        <strong>Chia ảnh theo lưới</strong>
-        <span>Giữ ảnh gốc</span>
+        <strong>宫格切分</strong>
+        <span>保留原图</span>
       </div>
-      <div class="gridPresets" aria-label="Lưới thường dùng">
+      <div class="gridPresets" aria-label="常用宫格">
         <button
           v-for="size in [2, 3, 4, 5]"
           :key="size"
@@ -27,29 +27,29 @@
           <span class="presetIcon" :style="{ gridTemplateColumns: `repeat(${size}, 1fr)` }" aria-hidden="true">
             <i v-for="cell in size * size" :key="cell" />
           </span>
-          <span>{{ size * size }} ô</span>
+          <span>{{ size * size }} 宫格</span>
           <small>{{ size }} × {{ size }}</small>
         </button>
       </div>
       <div class="customGrid">
-        <label><span>Số hàng</span><el-input-number v-model="rows" :min="1" :max="10" :precision="0" :disabled="splitting" controlsPosition="right" aria-label="Số hàng chia" /></label>
+        <label><span>行数</span><el-input-number v-model="rows" :min="1" :max="10" :precision="0" :disabled="splitting" controlsPosition="right" aria-label="切分行数" /></label>
         <span class="gridMultiply">×</span>
-        <label><span>Số cột</span><el-input-number v-model="columns" :min="1" :max="10" :precision="0" :disabled="splitting" controlsPosition="right" aria-label="Số cột chia" /></label>
+        <label><span>列数</span><el-input-number v-model="columns" :min="1" :max="10" :precision="0" :disabled="splitting" controlsPosition="right" aria-label="切分列数" /></label>
       </div>
       <div v-if="visible" class="previewArea">
         <div class="previewImage">
-          <img :src="src" alt="Xem trước lưới chia ảnh" @load="readSize" @error="imageSize = { width: 0, height: 0 }" />
+          <img :src="src" alt="宫格切分预览" @load="readSize" @error="imageSize = { width: 0, height: 0 }" />
           <div v-if="validGrid" class="previewGrid" :style="{ gridTemplateColumns: `repeat(${columns}, 1fr)`, gridTemplateRows: `repeat(${rows}, 1fr)` }" aria-hidden="true">
             <span v-for="cell in rows * columns" :key="cell"><small>{{ cell }}</small></span>
           </div>
         </div>
       </div>
       <div class="splitSummary" aria-live="polite">
-        <span>{{ validGrid ? `Tổng cộng ${rows * columns} ảnh` : 'Hãy nhập số hàng và cột hợp lệ' }}</span>
-        <span>Chia từng hàng từ trái sang phải</span>
+        <span>{{ validGrid ? `共 ${rows * columns} 张图片` : '请设置有效行列数' }}</span>
+        <span>从左到右，逐行切分</span>
       </div>
       <el-button class="splitButton" type="primary" :loading="splitting" :disabled="!canSplit || disabled" @click="splitImage">
-        {{ splitting ? `Đang chia ${completed} / ${rows * columns}` : 'Chia thành các node ảnh' }}
+        {{ splitting ? `正在切分 ${completed} / ${rows * columns}` : '切分为图片节点' }}
       </el-button>
     </div>
   </el-popover>

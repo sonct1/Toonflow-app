@@ -24,7 +24,8 @@
   },
   "dependencies": {
     "three": "0.184.0",
-    "@tabler/icons-vue": "^3.46.0"
+    "@tabler/icons-vue": "^3.46.0",
+    "@toonflow/i18n": "workspace:*"
   },
   "devDependencies": {
     "@toonflow/node-shared": "workspace:*",

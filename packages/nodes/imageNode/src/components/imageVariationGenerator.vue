@@ -9,13 +9,13 @@
       </el-option-group>
     </el-select>
     <el-popover trigger="click" placement="top" :width="220" :disabled="busy || !selectedModel" :showArrow="false">
-      <template #reference><el-button class="sizeButton" text :disabled="busy || !selectedModel" :aria-label="`${label}输出设置`">{{ settings.ratio || 'Tỷ lệ' }} · {{ settings.size || 'Độ phân giải' }}</el-button></template>
+      <template #reference><el-button class="sizeButton" text :disabled="busy || !selectedModel" :aria-label="`${label}输出设置`">{{ settings.ratio || '比例' }} · {{ settings.size || '分辨率' }}</el-button></template>
       <div class="variationSettings nodrag nopan nowheel" @pointerdown.stop @mousedown.stop @wheel.stop @keydown.stop>
-        <label>Độ phân giải<el-select v-model="settings.size" :disabled="busy" :aria-label="`${label}分辨率`"><el-option v-for="size in sizeOptions" :key="size" :label="size" :value="size" /></el-select></label>
-        <label>Tỷ lệ<el-select v-model="settings.ratio" :disabled="busy" :aria-label="`${label}比例`" @change="ratioFromSource = false"><el-option v-for="ratio in ratioOptions" :key="ratio" :label="ratio" :value="ratio" /></el-select></label>
+        <label>分辨率<el-select v-model="settings.size" :disabled="busy" :aria-label="`${label}分辨率`"><el-option v-for="size in sizeOptions" :key="size" :label="size" :value="size" /></el-select></label>
+        <label>比例<el-select v-model="settings.ratio" :disabled="busy" :aria-label="`${label}比例`" @change="ratioFromSource = false"><el-option v-for="ratio in ratioOptions" :key="ratio" :label="ratio" :value="ratio" /></el-select></label>
       </div>
     </el-popover>
-    <el-button type="primary" :icon="IconSparkles" :loading="generating" :disabled="busy || modelsLoading || !source || !selectedModel || !prompt.trim()" @click="generate">{{ buttonLabel ?? 'Tạo ảnh' }}</el-button>
+    <el-button type="primary" :icon="IconSparkles" :loading="generating" :disabled="busy || modelsLoading || !source || !selectedModel || !prompt.trim()" @click="generate">{{ buttonLabel ?? '生成图片' }}</el-button>
   </footer>
 </template>
 

@@ -1,11 +1,11 @@
 <template>
   <div class="promptInputWrap nodrag nopan nowheel">
-    <el-button v-if="expandable" class="expandButton" :icon="IconMaximize" text circle title="Mở rộng trình sửa prompt" aria-label="Mở rộng trình sửa prompt" @mousedown.prevent @click.stop="expanded = true" />
+    <el-button v-if="expandable" class="expandButton" :icon="IconMaximize" text circle title="展开编辑提示词" aria-label="展开编辑提示词" @mousedown.prevent @click.stop="expanded = true" />
     <teleport :to="expandedTarget || 'body'" :disabled="!expanded || !expandedTarget">
       <div ref="senderElement" class="promptInput nodrag nopan nowheel" :class="{ expandedInput: expanded }" @keydown.capture="handleMentionKey" @click.capture="previewReference" />
     </teleport>
   </div>
-  <el-dialog v-if="expandable" v-model="expanded" class="promptEditorDialog" title="Prompt tạo nội dung" width="80%" alignCenter appendToBody :closeOnClickModal="false" @opened="sender?.focus('mark')" @close="expanded = false" @closed="sender?.focus('mark')">
+  <el-dialog v-if="expandable" v-model="expanded" class="promptEditorDialog" title="生成提示词" width="80%" alignCenter appendToBody :closeOnClickModal="false" @opened="sender?.focus('mark')" @close="expanded = false" @closed="sender?.focus('mark')">
     <div ref="expandedTarget" class="promptExpandedTarget nodrag nopan nowheel" @pointerdown.stop @mousedown.stop @dblclick.stop />
   </el-dialog>
   <el-image-viewer v-if="previewUrl" :urlList="[previewUrl]" teleported @close="previewReferenceId = undefined" />
@@ -33,6 +33,7 @@ import { ElButton, ElDialog, ElImageViewer, ElMessage, useZIndex } from "element
 import { IconMaximize } from "@tabler/icons-vue";
 import xSender, { type AnyTagProps, type MentionItem } from "x-sender";
 import "x-sender/lib/XSender.css";
+import { locale, translate } from "@toonflow/i18n/vue";
 import type { MaterialMention, ReferenceMention } from "../useNodeReferences";
 import { getPromptText } from "../promptText";
 import promptReferenceMenu from "./promptReferenceMenu.vue";
@@ -273,7 +274,7 @@ watch(() => props.references, async (options) => {
   const instance = sender;
   if (!instance) return;
   instance.bus.emit(xSender.EventSet.EVENT_COMMON_DIALOG_CLOSE);
-  if (props.materials === undefined) instance.updateConfig({ mentionConfig: { dialogTitle: "Chọn tham chiếu", callEvery: false, options } });
+  if (props.materials === undefined) instance.updateConfig({ mentionConfig: { dialogTitle: translate("选择参考"), callEvery: false, options } });
   // 等库将本帧的输入 DOM 写回模型后再更新参考，避免用旧文本重建输入框。
   await instance.nextTick();
   if (sender === instance) syncModel();
@@ -288,11 +289,11 @@ watch(senderElement, (element, _previous, onCleanup) => {
   const initialModel: AnyTagProps[][] = model.value.length ? model.value : text.value.split("\n").map(text => [{ type: "Write", text }]);
   const instance = new xSender(element, {
     autoFocus: false,
-    placeholder: props.placeholder ?? "Mô tả nội dung và phong cách, nhập @ để thêm tham chiếu",
+    placeholder: props.placeholder ?? translate("描述一下生成风格提示词，输入 @ 引用参考"),
     chatStyle: { minHeight: "70px", maxHeight: "180px", fontSize: "14px", lineHeight: "1.6" },
     getPopupContainer: () => popup,
     // ACT: XSender 1.4.6 不支持分组候选渲染，扩展引用菜单由 Vue 管理，标签仍走编辑器公开 API。
-    ...(props.materials === undefined ? { mentionConfig: { dialogTitle: "Chọn tham chiếu", callEvery: false, options: props.references } } : {}),
+    ...(props.materials === undefined ? { mentionConfig: { dialogTitle: translate("选择参考"), callEvery: false, options: props.references } } : {}),
     keyboardSendFun: () => false,
     keyboardWrapFun: event => event.key === "Enter" && !event.isComposing,
   });
@@ -339,7 +340,14 @@ watch(senderElement, (element, _previous, onCleanup) => {
     if (sender === instance && editor.isConnected) await insertNodes(nodes);
   };
   editor.setAttribute("role", "textbox");
-  editor.setAttribute("aria-label", "Prompt tạo nội dung");
+  editor.setAttribute("aria-label", translate("生成提示词"));
+  const stopLanguageWatch = watch([locale, () => props.placeholder], () => {
+    instance.updateConfig({
+      placeholder: props.placeholder ?? translate("描述一下生成风格提示词，输入 @ 引用参考"),
+      ...(props.materials === undefined ? { mentionConfig: { dialogTitle: translate("选择参考"), callEvery: false, options: props.references } } : {}),
+    });
+    editor.setAttribute("aria-label", translate("生成提示词"));
+  });
   editor.setAttribute("aria-multiline", "true");
   instance.bus.on("textPrompt", xSender.EventSet.EVENT_COMMON_CHANGE, () => {
     syncModel();
@@ -378,6 +386,7 @@ watch(senderElement, (element, _previous, onCleanup) => {
   document.addEventListener("pointerdown", closeOutside, true);
   onCleanup(() => {
     stopExpandedWatch();
+    stopLanguageWatch();
     updateModel(instance.getModel());
     releaseNodeFocus(instance);
     sender = undefined;
@@ -391,7 +400,7 @@ watch(senderElement, (element, _previous, onCleanup) => {
     // ACT: 1.4.6 的 destroy 会删除排队回调仍需用到的字段；先走公开清理事件，库修复后可直接 destroy。
     instance.bus.offKeyEvent("textPrompt");
     instance.bus.emit(xSender.EventSet.EVENT_COMMON_DIALOG_CLOSE);
-    if (props.materials === undefined) instance.updateConfig({ mentionConfig: { dialogTitle: "Chọn tham chiếu", callEvery: false, options: [] } });
+    if (props.materials === undefined) instance.updateConfig({ mentionConfig: { dialogTitle: translate("选择参考"), callEvery: false, options: [] } });
     instance.bus.emit(xSender.EventSet.EVENT_COMMON_DESTROY);
     popup.remove();
   });

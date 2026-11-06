@@ -21,35 +21,35 @@
       @volumechange="readVolume"
       @error="mediaError" />
     <div v-if="preparingPreview || previewError" class="previewStatus" role="status">
-      {{ preparingPreview ? "Đang chuẩn bị bản xem trước…" : previewError }}
+      {{ preparingPreview ? "正在生成兼容预览…" : previewError }}
     </div>
     <div v-show="!fullscreen" class="playerControls nodrag nopan nowheel" @pointerdown.stop @mousedown.stop @dblclick.stop @keydown.stop>
-      <el-button class="playerButton playButton" text circle :icon="playing ? IconPlayerPause : IconPlayerPlay" :disabled="!ready" :aria-label="playing ? 'Tạm dừng video' : 'Phát video'" :title="playing ? 'Tạm dừng' : 'Phát'" @click="togglePlayback" />
+      <el-button class="playerButton playButton" text circle :icon="playing ? IconPlayerPause : IconPlayerPlay" :disabled="!ready" :aria-label="playing ? '暂停视频' : '播放视频'" :title="playing ? '暂停' : '播放'" @click="togglePlayback" />
       <span class="currentTime">{{ formatTime(currentTime) }}</span>
-      <el-slider class="progressSlider" :modelValue="currentTime" :min="0" :max="duration || 1" :step="0.01" :disabled="!ready || !duration" :formatTooltip="formatTime" aria-label="Tiến độ phát video" @input="seek" />
+      <el-slider class="progressSlider" :modelValue="currentTime" :min="0" :max="duration || 1" :step="0.01" :disabled="!ready || !duration" :formatTooltip="formatTime" aria-label="视频播放进度" @input="seek" />
       <span class="durationLabel"><span class="timeSeparator">/</span>{{ formatTime(duration) }}</span>
       <div class="volumeControl">
         <el-popover trigger="hover" placement="top" :width="40" :popperStyle="{ minWidth: '40px', padding: '8px 0', borderRadius: 'var(--el-border-radius-base)' }" :showArrow="false" :showAfter="80" :hideAfter="150" :disabled="!ready">
           <template #reference>
-            <el-button class="playerButton volumeButton" text circle :icon="muted || !volume ? IconVolumeOff : IconVolume" :disabled="!ready" :aria-pressed="muted || !volume" :aria-label="muted || !volume ? 'Bật tiếng' : 'Tắt tiếng video'" title="音量 · 点击切换静音" @click="toggleMute" />
+            <el-button class="playerButton volumeButton" text circle :icon="muted || !volume ? IconVolumeOff : IconVolume" :disabled="!ready" :aria-pressed="muted || !volume" :aria-label="muted || !volume ? '取消静音' : '静音视频'" title="音量 · 点击切换静音" @click="toggleMute" />
           </template>
           <div class="volumePanel nodrag nopan nowheel" @pointerdown.stop @mousedown.stop @dblclick.stop @keydown.stop>
             <span class="volumeValue">{{ muted ? 0 : volume }}%</span>
-            <el-slider class="volumeSlider" :modelValue="muted ? 0 : volume" vertical height="60px" :min="0" :max="100" :showTooltip="false" aria-label="Âm lượng video" @input="setVolume" />
+            <el-slider class="volumeSlider" :modelValue="muted ? 0 : volume" vertical height="60px" :min="0" :max="100" :showTooltip="false" aria-label="视频音量" @input="setVolume" />
           </div>
         </el-popover>
       </div>
       <el-dropdown v-if="!readOnly && files" class="captureMenu" trigger="click" placement="top-end" :disabled="!ready || capturing" @visibleChange="captureMenuVisible = $event" @command="captureFrame">
-        <el-button class="playerButton" text circle :icon="IconPhotoScan" :loading="capturing" :disabled="!ready || capturing" :aria-expanded="captureMenuVisible" aria-label="Chụp khung hình video" title="Chụp khung hình video" />
+        <el-button class="playerButton" text circle :icon="IconPhotoScan" :loading="capturing" :disabled="!ready || capturing" :aria-expanded="captureMenuVisible" aria-label="截取视频帧" title="截取视频帧" />
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item command="current" :icon="IconPhotoScan">Chụp khung hình hiện tại</el-dropdown-item>
-            <el-dropdown-item command="first" :icon="IconPlayerSkipBack">Chụp khung hình đầu</el-dropdown-item>
-            <el-dropdown-item command="last" :icon="IconPlayerSkipForward">Chụp khung hình cuối</el-dropdown-item>
+            <el-dropdown-item command="current" :icon="IconPhotoScan">截取当前帧</el-dropdown-item>
+            <el-dropdown-item command="first" :icon="IconPlayerSkipBack">截取首帧</el-dropdown-item>
+            <el-dropdown-item command="last" :icon="IconPlayerSkipForward">截取尾帧</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
-      <el-button class="playerButton fullscreenButton" text circle :icon="IconMaximize" :disabled="!ready" aria-label="Video toàn màn hình" title="Toàn màn hình" @click="enterFullscreen" />
+      <el-button class="playerButton fullscreenButton" text circle :icon="IconMaximize" :disabled="!ready" aria-label="全屏视频" title="全屏" @click="enterFullscreen" />
     </div>
   </div>
 </template>
