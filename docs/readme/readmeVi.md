@@ -299,6 +299,8 @@ Xem thêm trong [hướng dẫn sử dụng](https://qcn7xdsqgc4z.feishu.cn/docx
 
 ### 4.2 Cài đặt bằng Docker
 
+**Bản fork DX Tokens:** clone `https://github.com/sonct1/Toonflow-app.git`, rồi chạy `python3 start.py`. Nếu máy có `$HOME/.pi/pi-agent1/models.json`, ứng dụng tự thêm DX Tokens từ cấu hình đó; không cần nhập lại provider/model. Nếu chưa có cấu hình Pi, cấp `DX_TOKENS_API_KEY` qua môi trường hoặc `.env` riêng. API key không được lưu trên Git. Xem [hướng dẫn DX Tokens](dxTokens.md).
+
 Trước tiên, cài Git, [Docker Engine](https://docs.docker.com/engine/install/) và Docker Compose. Trên Windows / macOS, có thể dùng chế độ container Linux của Docker Desktop. Kho mã cung cấp [Dockerfile](../../Dockerfile), [cấu hình Compose](../../compose.yaml) và [quy tắc loại trừ khi build](../../.dockerignore), sử dụng Bun 1.4.3 để build và tích hợp FFmpeg trong image.
 
 <details>
