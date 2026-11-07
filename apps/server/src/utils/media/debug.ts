@@ -1,4 +1,9 @@
 import { z } from "zod";
+import { createHash, randomUUID } from "node:crypto";
+import { dirname, join } from "node:path";
+import { lstat, mkdir, readFile, writeAtomic } from "@toonflow/file";
+import conf from "@/utils/conf";
+import type { ProviderTaskData } from "@toonflow/providers";
 import { loadMediaProviderSource, replaceMediaProviderModels } from "@/utils/media/provider";
 import { t, translateError } from "@/lib/i18n";
 import { requireDirectModelAccess } from "@/utils/multiTenant/gateway";
@@ -7,6 +12,8 @@ export const providerDebugSchema = {
   source: z.string().min(1).max(2 * 1024 * 1024),
   config: z.record(z.string(), z.json()).default({}),
 };
+
+const activeDebugRuns = new Set<string>();
 
 export async function inspectProviderSource(source: string) {
   requireDirectModelAccess();
@@ -26,6 +33,7 @@ export async function runProviderSource(
   signal: AbortSignal,
   send: (event: Record<string, unknown>) => void,
   models?: Parameters<typeof replaceMediaProviderModels>[1],
+  resumeRunId?: string,
 ) {
   requireDirectModelAccess();
   const startedAt = performance.now();
@@ -108,8 +116,39 @@ export async function runProviderSource(
     }
   }, { preconnect: fetch.preconnect }) as typeof fetch;
 
+  const runId = resumeRunId ? z.uuid().parse(resumeRunId) : randomUUID();
+  if (activeDebugRuns.has(runId)) throw new Error("Debug run is already active");
+  const checkpointDirectory = join(dirname(conf.path), "providerDebugTasks");
+  const checkpointPath = join(checkpointDirectory, `${runId}.json`);
+  const effectiveSource = models === undefined ? source : replaceMediaProviderModels(source, models);
+  let checkpointSaved = false;
+  let providerId: string | undefined;
+  const saveTaskData = async (data: ProviderTaskData) => {
+    // The loader validates checkpoint data against provider credentials before this callback.
+    // Debug runs retain receipts for manual recovery, never source/config or automatic replay.
+    const content = JSON.stringify({ version: 1, runId, providerId, sourceRevision: createHash("sha256").update(effectiveSource).digest("hex"), updatedAt: Date.now(), providerData: data });
+    if (Buffer.byteLength(content, "utf8") > 1024 * 1024) throw new Error("Debug checkpoint exceeds 1 MiB; use a workspace generation task instead");
+    await mkdir(checkpointDirectory, { recursive: true, mode: 0o700 });
+    const info = await lstat(checkpointDirectory);
+    if (!info.isDirectory() || info.isSymbolicLink()) throw new Error("Invalid debug checkpoint directory");
+    await writeAtomic(checkpointPath, content, { mode: 0o600, exclusive: !checkpointSaved });
+    checkpointSaved = true;
+  };
+  activeDebugRuns.add(runId);
   try {
-    const provider = await loadMediaProviderSource(models === undefined ? source : replaceMediaProviderModels(source, models), config, signal, fetchRequest);
+    const provider = await loadMediaProviderSource(effectiveSource, config, signal, fetchRequest, undefined, saveTaskData);
+    providerId = provider.id;
+    send({ type: "run", runId });
+    let recoveryData: ProviderTaskData | undefined;
+    if (resumeRunId) {
+      const info = await lstat(checkpointPath);
+      if (!info.isFile() || info.isSymbolicLink() || info.size > 1024 * 1024) throw new Error("Invalid debug checkpoint");
+      const saved = JSON.parse(await readFile(checkpointPath, "utf8"));
+      if (saved.runId !== runId || saved.providerId !== provider.id || saved.sourceRevision !== createHash("sha256").update(effectiveSource).digest("hex")) throw new Error("Restore the original provider source and models before resuming");
+      if (!provider.resumeTask) throw new Error("Provider does not support resume");
+      recoveryData = saved.providerData;
+      checkpointSaved = true;
+    }
     collectSecrets(provider.config);
     const model = provider.models.find(model => model.id === request.model);
     if (!model) throw new Error("模型已变更，请重新选择模型");
@@ -117,7 +156,9 @@ export async function runProviderSource(
     if (!method) throw new Error("供应商没有实现此模型的媒体生成方法");
     const prompt = request[model.type === "audio" ? "text" : "prompt"];
     if (typeof prompt !== "string" || !prompt.trim()) throw new Error("请输入提示词");
-    const assets = await method.call(provider, request as unknown as ImageRequest & VideoRequest & AudioRequest);
+    const assets = resumeRunId
+      ? await provider.resumeTask!(recoveryData!)
+      : await method.call(provider, request as unknown as ImageRequest & VideoRequest & AudioRequest);
     signal.throwIfAborted();
     if (!Array.isArray(assets) || !assets.length) throw new Error("供应商未返回媒体数组");
     let size = 0;
@@ -138,6 +179,8 @@ export async function runProviderSource(
     });
     send({ type: "result", assets: result, response: redact(result), duration: Math.round(performance.now() - startedAt) });
   } catch (error) {
-    send({ type: "error", message: redact(translateError(error)), duration: Math.round(performance.now() - startedAt) });
-  }
+    const recovery = checkpointSaved
+      ? `\nDebug checkpoint: providerDebugTasks/${runId}.json. Inspect the existing provider task before running Test again; Test starts a new generation, not a resume.` : "";
+    send({ type: "error", message: redact(translateError(error)) + recovery, duration: Math.round(performance.now() - startedAt) });
+  } finally { activeDebugRuns.delete(runId); }
 }

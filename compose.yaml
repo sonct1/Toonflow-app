@@ -7,6 +7,8 @@ services:
       DX_TOKENS_API_KEY: ${DX_TOKENS_API_KEY:-}
       DX_TOKENS_BASE_URL: ${DX_TOKENS_BASE_URL:-https://dx-tokens.cmctelecom.vn/v1}
       DX_TOKENS_MODELS_JSON: ${DX_TOKENS_MODELS_JSON:-}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - "127.0.0.1:3000:3000"
     volumes:

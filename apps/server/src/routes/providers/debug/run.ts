@@ -7,6 +7,7 @@ export default Router().post("/", validateFields({
   ...u.providerDebug.providerDebugSchema,
   request: z.record(z.string(), z.json()),
   models: u.mediaProvider.mediaModelsSchema.optional(),
+  resumeRunId: z.uuid().optional(),
 }), async (req, res) => {
   u.mcpControl.assertAppRequest(req);
   u.multiTenant.requireDirectModelAccess();
@@ -22,7 +23,7 @@ export default Router().post("/", validateFields({
   req.socket.once("close", close);
   const send = (event: Record<string, unknown>) => { if (!res.destroyed) res.write(`${JSON.stringify(event)}\n`); };
   try {
-    await u.providerDebug.runProviderSource(req.body.source, req.body.config ?? {}, req.body.request, AbortSignal.any([controller.signal, AbortSignal.timeout(30 * 60_000)]), send, req.body.models);
+    await u.providerDebug.runProviderSource(req.body.source, req.body.config ?? {}, req.body.request, AbortSignal.any([controller.signal, AbortSignal.timeout(30 * 60_000)]), send, req.body.models, req.body.resumeRunId);
     send({ type: "done" });
   } finally {
     clearInterval(heartbeat);

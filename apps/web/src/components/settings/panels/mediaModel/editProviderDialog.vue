@@ -55,7 +55,7 @@
   </el-dialog>
   <el-dialog v-model="testVisible" :title="`测试媒体模型：${testProvider?.label ?? ''}`" width="min(1120px, calc(100vw - 32px))" alignCenter appendToBody destroyOnClose :closeOnClickModal="false">
     <div class="modelTestBody">
-      <providerTestPanel v-if="testVisible && testProvider" :source="testSource" :provider="testProvider" :config="testConfig" :modelId="testModelId" :models="testProvider.models" />
+      <providerTestPanel v-if="testVisible && testProvider" :source="testSource" :provider="testProvider" :config="testConfig" :modelId="testModelId" :models="testProvider.models" :beforeRun="refreshTestSource" />
     </div>
   </el-dialog>
 </template>
@@ -118,6 +118,15 @@ watch(visible, isVisible => {
   models.value = JSON.parse(JSON.stringify(provider?.models ?? []));
 }, { immediate: true });
 onBeforeUnmount(() => testLoading?.abort());
+
+async function refreshTestSource(signal: AbortSignal) {
+  if (!testProvider.value) throw new Error("Provider is unavailable");
+  const { data } = await axios.get<{ data: { source: string; revision: string } }>("/api/providers/media/source", {
+    params: { fileName: testProvider.value.fileName }, headers: { "x-toonflow-workspace": "1" }, signal,
+  });
+  if (data.data.revision !== revision.value) throw new Error("Provider source changed. Reopen Settings before testing; no generation was submitted.");
+  testSource.value = data.data.source;
+}
 
 async function testModel(index: number) {
   const model = models.value[index];

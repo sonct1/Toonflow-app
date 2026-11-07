@@ -96,8 +96,9 @@
       <el-text size="small" :type="status === '成功' ? 'success' : status === '失败' ? 'danger' : 'info'" role="status" aria-live="polite">{{ statusLabel }}{{ elapsed ? ` · ${(elapsed / 1000).toFixed(1)} 秒` : '' }}</el-text>
       <div class="testActions">
         <slot name="actions" :busy="busy" />
+        <el-button v-if="!busy && recoveryRunId" :disabled="disabled" @click="run(true)">Resume / Download existing task</el-button>
         <el-button v-if="busy" type="danger" :icon="IconPlayerStop" @click="stop">停止</el-button>
-        <el-button v-else type="primary" :icon="IconPlayerPlay" :disabled="disabled || !source || !activeModel" @click="run">开始测试</el-button>
+        <el-button v-else type="primary" :icon="IconPlayerPlay" :disabled="disabled || !source || !activeModel" @click="run(false)">开始测试</el-button>
       </div>
     </div>
   </div>
@@ -128,6 +129,7 @@ const props = defineProps<{
 }>();
 const emit = defineEmits<{ feedback: [message: string]; busyChange: [busy: boolean] }>();
 const busy = ref(false);
+const recoveryRunId = ref("");
 const formRules = shallowRef<ReturnType<typeof formCreate.copyRules>>([]);
 const formApi = shallowRef<Api>();
 const configValues = ref<Record<string, unknown>>({});
@@ -250,6 +252,7 @@ function clearResults() {
 }
 
 function receive(event: Record<string, any>) {
+  if (event.type === "run") { recoveryRunId.value = event.runId; return; }
   if (event.type === "log") {
     const index = logs.value.findIndex(log => log.id === event.log.id);
     logs.value = index < 0 ? [...logs.value, event.log] : logs.value.map((log, itemIndex) => itemIndex === index ? event.log : log);
@@ -268,12 +271,13 @@ function receive(event: Record<string, any>) {
   }
 }
 
-async function run() {
+async function run(resume = false) {
   if (busy.value || props.disabled) return;
   const owner = new AbortController();
   controller = owner;
   const signal = owner.signal;
   busy.value = true;
+  if (!resume) recoveryRunId.value = "";
   clearResults();
   status.value = "运行中…";
   lastProvider = { id: props.provider.id, label: props.provider.label };
@@ -306,7 +310,7 @@ async function run() {
     const request = await buildRequest(signal);
     signal.throwIfAborted();
     lastRequest = request;
-    const response = await fetch("/api/providers/debug/run", { method: "POST", headers: { "x-toonflow-workspace": "1", "Accept-Language": locale.value, "Content-Type": "application/json" }, body: JSON.stringify({ source, config, request, models }), signal });
+    const response = await fetch("/api/providers/debug/run", { method: "POST", headers: { "x-toonflow-workspace": "1", "Accept-Language": locale.value, "Content-Type": "application/json" }, body: JSON.stringify({ source, config, request, models, ...(resume ? { resumeRunId: recoveryRunId.value } : {}) }), signal });
     if (!response.ok) throw new Error((await response.json()).message || "测试请求失败");
     if (!response.body) throw new Error("未收到运行结果");
     const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
@@ -328,7 +332,7 @@ async function run() {
         }
         if (done || completed) break;
       }
-      if (!completed || status.value === "运行中…") throw new Error("运行连接已中断，请重试");
+      if (!completed || status.value === "运行中…") throw new Error("Connection interrupted. Resume the existing task; do not start a new test.");
     } finally { await reader.cancel().catch(() => {}); }
   } catch (error) { if (!signal.aborted && controller === owner) showError(error); }
   finally {

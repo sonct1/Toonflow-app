@@ -1,5 +1,5 @@
 import { t } from "@/lib/i18n";
-import { listMediaModels, generateMedia } from "@/utils/media/generation";
+import { listMediaModels } from "@/utils/media/generation";
 import { createWorkspaceFfmpeg, executeWorkspaceFfmpeg } from "@/utils/ffmpeg";
 import { createBrowserContext } from "@/utils/browser";
 import { createSandboxContext } from "@toonflow/tool-sandbox/host";
@@ -52,8 +52,7 @@ export function createAgentToolContext(cwd: string, config: Record<string, unkno
   async function generate(mediaType: "image" | "video" | "audio", request: MediaGenerationRequest, signal?: AbortSignal) {
     requireWorkspace();
     signal?.throwIfAborted();
-    if (!modelGateway.enabled()) return generateMedia(cwd, mediaType, request, signal);
-    if (!actor) throw Object.assign(new Error("请先登录 Toonflow"), { status: 401 });
+    if (modelGateway.enabled() && !actor) throw Object.assign(new Error("请先登录 Toonflow"), { status: 401 });
     const taskId = crypto.randomUUID();
     await mediaTasks.start(cwd, taskId, mediaType, request, {}, actor);
     return mediaTasks.wait(cwd, taskId, actor, signal);
